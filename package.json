@@ -1,0 +1,24 @@
+{
+  "name": "changelog-view",
+  "version": "1.0.0",
+  "description": "Tool to view changelog of package in console",
+  "main": "src/index.js",
+  "bin": "src/bin.js",
+  "repository": "https://github.com/jdeniau/changelog-view",
+  "author": "Julien Deniau <julien.deniau@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "github": "^9.2.0",
+    "jest": "^20.0.4",
+    "marked": "^0.3.6",
+    "marked-terminal": "^2.0.0",
+    "minimist": "^1.2.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.24.1",
+    "babel-preset-env": "^1.6.0"
+  },
+  "scripts": {
+    "test": "jest"
+  }
+}
