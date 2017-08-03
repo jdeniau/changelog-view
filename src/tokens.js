@@ -5,7 +5,7 @@ export function titleMatchCurrentVersion(title, version) {
     return false;
   }
 
-  const titleSemVerMatch = title.match(/(\d+)\.(\d+)\.(\d+)/);
+  const titleSemVerMatch = title.match(/(\d+)(?:\.(\d+)(?:\.(\d+))?)?/);
   const semVerMatch = version.match(/(\d+)\.(\d+)\.(\d+)/);
 
   if (!titleSemVerMatch) {
@@ -15,11 +15,9 @@ export function titleMatchCurrentVersion(title, version) {
   const [semVer, titleMajor, titleMinor, titlePatch] = titleSemVerMatch;
   const [currentSemVer, currentMajor, currentMinor, currentPatch] = semVerMatch;
 
-  console.log(titleMajor, titleMinor, titlePatch, currentMajor, currentMinor, currentPatch);
-
-  if (titleMajor === currentMajor || Number(titleMajor) === 'NaN') {
-    if (titleMinor === currentMinor || Number(titleMinor) === 'NaN') {
-      if (titlePatch === currentPatch || Number(titlePatch) === 'NaN') {
+  if (titleMajor === currentMajor) {
+    if (titleMinor === currentMinor || titleMinor === undefined) {
+      if (titlePatch === currentPatch || titlePatch === undefined) {
         return true;
       }
     }

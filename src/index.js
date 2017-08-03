@@ -1,26 +1,24 @@
-import https from 'https';
 import marked from 'marked';
 import TerminalRenderer from 'marked-terminal';
 import { findContent } from './tokens';
+import { getFileContent } from './file';
 
 
 const CURRENT_VERSION = '0.15.0';
 
 export default function(packageString) {
-  const [match, packageName, version] = packageString.match(/(.*)@(\d+\.\d+\.\d+)/);
+  const matches = packageString.match(/(.*)@(\d+\.\d+\.\d+)/);
 
-  const content = https.get(
-    `https://raw.githubusercontent.com/${packageName}/master/CHANGELOG.md`,
-    (res) => {
-      // console.log(res);
+  if (!matches) {
+    console.error(`package "${packageString}" version is not well formatted`);
+    process.exit(1);
+  }
 
-      let rawData = '';
-      res.on('data', (chunk) => { rawData += chunk; });
-      res.on('end', () => {
-        const content = findContent(rawData, version);
-        console.log(marked.parser(content, { renderer: new TerminalRenderer() }));
-      });
-    }
-  );
+  const [match, packageName, version] = matches;
+
+  const rawData = getFileContent(packageName).then(rawData => {
+    const content = findContent(rawData, version);
+    console.log(marked.parser(content, { renderer: new TerminalRenderer() }));
+  });
 
 }
