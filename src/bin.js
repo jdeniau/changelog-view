@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import minimist from 'minimist';
-import changelogView from './';
+import packageListChangeLog from './';
 
 const packages = [];
 const currentVersion = null;
@@ -31,7 +31,5 @@ if (args.help || args._.length === 0) {
 }
 
 function go(args) {
-  args._.forEach(packageString => {
-    changelogView(packageString);
-  });
+  packageListChangeLog(args._);
 }

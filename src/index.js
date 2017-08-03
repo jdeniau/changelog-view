@@ -6,7 +6,7 @@ import { getFileContent } from './file';
 
 const CURRENT_VERSION = '0.15.0';
 
-export default function(packageString) {
+function changelogView(packageString) {
   const matches = packageString.match(/(.*)@(\d+\.\d+\.\d+)/);
 
   if (!matches) {
@@ -18,7 +18,14 @@ export default function(packageString) {
 
   const rawData = getFileContent(packageName).then(rawData => {
     const content = findContent(rawData, version);
+    console.log(marked(`# CHANGELOG for "${packageName}"`, { renderer: new TerminalRenderer() }));
     console.log(marked.parser(content, { renderer: new TerminalRenderer() }));
   });
 
+}
+
+export default function packageListChangeLog(packageStringList) {
+  packageStringList.forEach(packageString => {
+    changelogView(packageString);
+  });
 }
