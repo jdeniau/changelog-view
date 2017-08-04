@@ -3,7 +3,6 @@ import TerminalRenderer from 'marked-terminal';
 import { findContent } from './tokens';
 import { getFileContent } from './file';
 
-
 const CURRENT_VERSION = '0.15.0';
 
 function changelogView(packageString) {
@@ -16,12 +15,24 @@ function changelogView(packageString) {
 
   const [match, packageName, version] = matches;
 
-  const rawData = getFileContent(packageName).then(rawData => {
-    const content = findContent(rawData, version);
-    console.log(marked(`# CHANGELOG for "${packageName}"`, { renderer: new TerminalRenderer() }));
-    console.log(marked.parser(content, { renderer: new TerminalRenderer() }));
-  });
-
+  const rawData = getFileContent(packageName)
+    .then(rawData => {
+      const content = findContent(rawData, version);
+      console.log(
+        marked(`# CHANGELOG for "${packageName}"`, {
+          renderer: new TerminalRenderer(),
+        })
+      );
+      console.log(marked.parser(content, { renderer: new TerminalRenderer() }));
+    })
+    .catch(e => {
+      console.error(
+        `${e.message}\nTested files: ${e.testedFiles.map(
+          f => `\n  * [${f.type}] ${f.fileName}`
+        )}`
+      );
+      process.exit(1);
+    });
 }
 
 export default function packageListChangeLog(packageStringList) {
