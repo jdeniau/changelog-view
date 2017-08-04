@@ -33,7 +33,10 @@ export function findContent(content, version) {
 
   for (let i = 0; i < tokens.length; i++) {
     const token = tokens[i];
-    if (token.type === 'heading' && titleMatchCurrentVersion(token.text, version)) {
+    if (
+      token.type === 'heading' &&
+      titleMatchCurrentVersion(token.text, version)
+    ) {
       break;
     }
 
@@ -51,4 +54,3 @@ function getTokens(content) {
 
   return tokens;
 }
-

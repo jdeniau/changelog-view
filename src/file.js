@@ -1,4 +1,5 @@
 import https from 'https';
+import fetch from 'node-fetch';
 
 const FILES_TO_TEST = [
   {
@@ -9,6 +10,9 @@ const FILES_TO_TEST = [
     type: 'github-file',
     fileName: 'HISTORY.md',
   },
+  // {
+  //   type: 'github-releases',
+  // },
 ];
 
 class NoFileFoundError extends Error {
@@ -33,7 +37,22 @@ export function getFileContent(packageName) {
               `https://raw.githubusercontent.com/${packageName}/master/${fileName}`
             );
 
-            resolve(result);
+            resolve(result, 'markdown');
+            break;
+
+          case 'github-releases':
+            result = await fetch(
+              `https://api.github.com/repos/${packageName}/releases`,
+              {
+                headers: {
+                  'User-Agent': 'changelog-view',
+                },
+              }
+            );
+
+            console.log(result);
+
+            resolve(result, 'github-release');
             break;
 
           default:
