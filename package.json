@@ -8,13 +8,15 @@
   "author": "Julien Deniau <julien.deniau@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "find-versions": "^2.0.0",
     "github": "^9.2.0",
     "jest": "^20.0.4",
     "marked": "^0.3.6",
     "marked-terminal": "^2.0.0",
     "marked-to-md": "^1.0.1",
     "minimist": "^1.2.0",
-    "node-fetch": "^1.7.1"
+    "node-fetch": "^1.7.1",
+    "semver": "^5.4.1"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",

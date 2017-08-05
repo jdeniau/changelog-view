@@ -1,9 +1,14 @@
 import marked from 'marked';
 import TerminalRenderer from 'marked-terminal';
-import { findContent } from './tokens';
+import semver from 'semver';
 import { getFileContent } from './file';
+import { convertMarkdownToVersionList } from './markdown';
 
-const CURRENT_VERSION = '0.15.0';
+export function findContent(content, version) {
+  return convertMarkdownToVersionList(content)
+    .filter(versionContent => semver.gt(versionContent.version, version))
+  ;
+}
 
 function changelogView(packageString) {
   const matches = packageString.match(/(.*)@(\d+\.\d+\.\d+)/);
@@ -23,7 +28,9 @@ function changelogView(packageString) {
           renderer: new TerminalRenderer(),
         })
       );
-      console.log(marked.parser(content, { renderer: new TerminalRenderer() }));
+      content.forEach(c => {
+      console.log(marked(c.content, { renderer: new TerminalRenderer() }));
+      });
     })
     .catch(e => {
       console.error(

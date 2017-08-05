@@ -1,5 +1,7 @@
 import marked from 'marked';
 import mdRenderer from 'marked-to-md';
+import semver from 'semver';
+import findVersions from 'find-versions';
 
 function getTokens(content) {
   const lexer = new marked.Lexer();
@@ -8,19 +10,29 @@ function getTokens(content) {
   return tokens;
 }
 
-function getVersionFromTitle(title) {
-  const titleSemVerMatch = title.match(/(\d+)(?:\.(\d+)(?:\.(\d+))?)?/);
-  if (!titleSemVerMatch) {
+export function semverize(title) {
+  title = title.replace(/(\d+\.\d+)\.x/, '$1.99999');
+  title = title.replace(/(\d+)\.x/, '$1.99999.99999');
+
+  const versions = findVersions(title, { loose: true });
+  if (!versions || versions.length === 0) {
     return null;
   }
 
-  const [version, major, minor, patch] = titleSemVerMatch;
+  const version = versions.sort(semver.compare).pop();
+
+  return version;
+}
+
+function getVersionFromTitle(title) {
+  const version = semverize(title);
+  if (!semver.valid(version)) {
+
+    return null;
+  }
 
   return {
     version,
-    major,
-    minor,
-    patch,
   };
 }
 
@@ -53,8 +65,9 @@ export function convertMarkdownToVersionList(markdown) {
 
   let currentVersionToken = [];
   const reducedTokens = reduceTokens(tokens);
-  return Object.entries(reducedTokens).map(([version, tokens]) => {
+  return Object.keys(reducedTokens).map((version) => {
     // console.log(version, tokens);
+    const tokens = reducedTokens[version];
     tokens.links = {};
     const content = marked.parser(tokens, {
       renderer: mdRenderer(new marked.Renderer()),
@@ -64,5 +77,7 @@ export function convertMarkdownToVersionList(markdown) {
       version,
       content,
     };
-  });
+  })
+    .sort((a, b) => semver.compare(b.version, a.version))
+  ;
 }
