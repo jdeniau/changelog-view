@@ -25,7 +25,10 @@ describe('get file content', () => {
 
     nock('https://api.github.com')
       .get('/repos/packages/release/releases')
-      .reply(200, '[{"tag_name": "1.0.0"}]');
+      .reply(
+        200,
+        '[{"tag_name": "1.4.0"},{"tag_name": "1.3.0"},{"tag_name": "1.2.0"},{"tag_name": "1.1.0"},{"tag_name": "1.0.0"}]'
+      );
 
     mockAllCalls('packages/history');
     mockAllCalls('packages/real');
@@ -64,7 +67,13 @@ describe('get file content', () => {
 
     return getPackageData('packages/release').then(content =>
       expect(content).toEqual({
-        content: [{ tag_name: '1.0.0' }],
+        content: [
+          { tag_name: '1.4.0' },
+          { tag_name: '1.3.0' },
+          { tag_name: '1.2.0' },
+          { tag_name: '1.1.0' },
+          { tag_name: '1.0.0' },
+        ],
         type: 'github-release',
       })
     );
