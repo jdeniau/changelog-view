@@ -3,6 +3,7 @@ import fetch from 'node-fetch';
 import semver from 'semver';
 import { convertGithubReleasesToVersionList } from './github-release';
 import { convertMarkdownToVersionList } from './markdown';
+import { extractNextLink } from './github-tools';
 
 const TEST_PROCESSES = [
   {
@@ -47,12 +48,8 @@ export function getPackageData(packageName, gtThanVersion = null) {
             break;
 
           case 'github-releases':
-            const ghReleaseResult = await innerFetch(
-              `https://api.github.com/repos/${packageName}/releases`
-            );
-
             resolve({
-              content: await ghReleaseResult.json(),
+              content: await githubReleasesFetch(packageName, gtThanVersion),
               type: 'github-release',
             });
             break;
@@ -110,4 +107,29 @@ function innerFetch(url) {
 
     return resp;
   });
+}
+
+async function githubReleasesFetch(packageName, gtThanVersion) {
+  let url = `https://api.github.com/repos/${packageName}/releases`;
+  let foundMatchingVersion = false;
+  let nextLink = null;
+  let result = [];
+
+  do {
+    const ghReleaseResult = await innerFetch(url);
+
+    const currentResult = await ghReleaseResult.json();
+
+    foundMatchingVersion =
+      currentResult.filter(item => semver.eq(item.tag_name, gtThanVersion))
+        .length > 0;
+
+    result = result.concat(currentResult);
+
+    if (!foundMatchingVersion) {
+      url = extractNextLink(ghReleaseResult.headers.get('link'));
+    }
+  } while (!foundMatchingVersion && url);
+
+  return result;
 }

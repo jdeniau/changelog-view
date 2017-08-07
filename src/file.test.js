@@ -27,13 +27,25 @@ describe('get file content', () => {
       .get('/repos/packages/release/releases')
       .reply(
         200,
-        '[{"tag_name": "1.4.0"},{"tag_name": "1.3.0"},{"tag_name": "1.2.0"},{"tag_name": "1.1.0"},{"tag_name": "1.0.0"}]'
+        '[{"tag_name": "1.4.0"},{"tag_name": "1.3.0"},{"tag_name": "1.2.0"},{"tag_name": "1.1.0"},{"tag_name": "1.0.0"}]',
+        {
+          Link:
+            '<https://api.github.com/repositories/123/releases?page=2>; rel="next", <https://api.github.com/repositories/123/releases?page=2>; rel="last"',
+        }
       );
+
+    nock('https://api.github.com')
+      .get('/repositories/123/releases?page=2')
+      .reply(200, '[{"tag_name": "v0.9.0"},{"tag_name": "v0.8.0"}]');
 
     mockAllCalls('packages/history');
     mockAllCalls('packages/real');
     mockAllCalls('packages/missing');
     mockAllCalls('packages/release');
+  });
+
+  afterEach(() => {
+    nock.cleanAll();
   });
 
   test('fetches file content', () => {
@@ -65,7 +77,7 @@ describe('get file content', () => {
   test('releases is found', () => {
     expect.assertions(1);
 
-    return getPackageData('packages/release').then(content =>
+    return getPackageData('packages/release', '1.1.0').then(content =>
       expect(content).toEqual({
         content: [
           { tag_name: '1.4.0' },
@@ -73,6 +85,25 @@ describe('get file content', () => {
           { tag_name: '1.2.0' },
           { tag_name: '1.1.0' },
           { tag_name: '1.0.0' },
+        ],
+        type: 'github-release',
+      })
+    );
+  });
+
+  test('releases is found on second page', () => {
+    expect.assertions(1);
+
+    return getPackageData('packages/release', '0.9.0').then(content =>
+      expect(content).toEqual({
+        content: [
+          { tag_name: '1.4.0' },
+          { tag_name: '1.3.0' },
+          { tag_name: '1.2.0' },
+          { tag_name: '1.1.0' },
+          { tag_name: '1.0.0' },
+          { tag_name: 'v0.9.0' },
+          { tag_name: 'v0.8.0' },
         ],
         type: 'github-release',
       })
