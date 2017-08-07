@@ -1,5 +1,6 @@
 import https from 'https';
 import fetch from 'node-fetch';
+import semver from 'semver';
 import { convertGithubReleasesToVersionList } from './github-release';
 import { convertMarkdownToVersionList } from './markdown';
 
@@ -31,7 +32,7 @@ class FileNotFound extends Error {
   }
 }
 
-export function getPackageData(packageName) {
+export function getPackageData(packageName, gtThanVersion = null) {
   return new Promise(async (resolve, reject) => {
     for (let i = 0; i < TEST_PROCESSES.length; i++) {
       const fileToTest = TEST_PROCESSES[i];
@@ -75,18 +76,26 @@ export function getPackageData(packageName) {
   });
 }
 
-export function getVersionListForPackage(packageName) {
-  return getPackageData(packageName).then(({ content, type }) => {
-    switch (type) {
-      case 'markdown':
-        return convertMarkdownToVersionList(content);
-      case 'github-release':
-        return convertGithubReleasesToVersionList(content);
-      default:
-        const msg = `Unable to determine how to convert version list from "${type}"`;
-        throw new Error(msg);
-    }
-  });
+export function getVersionListForPackage(packageName, gtThanVersion) {
+  return getPackageData(packageName, gtThanVersion)
+    .then(({ content, type }) => {
+      switch (type) {
+        case 'markdown':
+          return convertMarkdownToVersionList(content);
+        case 'github-release':
+          return convertGithubReleasesToVersionList(content);
+        default:
+          const msg = `Unable to determine how to convert version list from "${type}"`;
+          throw new Error(msg);
+      }
+    })
+    .then(versionList => filterVersionList(versionList, gtThanVersion));
+}
+
+function filterVersionList(versionList, version) {
+  return versionList.filter(versionContent =>
+    semver.gt(versionContent.version, version)
+  );
 }
 
 function innerFetch(url) {
