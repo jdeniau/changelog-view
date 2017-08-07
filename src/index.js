@@ -1,13 +1,12 @@
 import marked from 'marked';
 import TerminalRenderer from 'marked-terminal';
 import semver from 'semver';
-import { getFileContent } from './file';
-import { convertMarkdownToVersionList } from './markdown';
+import { getVersionListForPackage } from './file';
 
-export function findContent(content, version) {
-  return convertMarkdownToVersionList(content)
-    .filter(versionContent => semver.gt(versionContent.version, version))
-  ;
+export function filterVersionList(versionList, version) {
+  return versionList.filter(versionContent =>
+    semver.gt(versionContent.version, version)
+  );
 }
 
 function changelogView(packageString) {
@@ -20,21 +19,22 @@ function changelogView(packageString) {
 
   const [match, packageName, version] = matches;
 
-  const rawData = getFileContent(packageName)
-    .then(rawData => {
-      const content = findContent(rawData, version);
+  getVersionListForPackage(packageName)
+    .then(versionList => {
+      const content = filterVersionList(versionList, version);
       console.log(
         marked(`# CHANGELOG for "${packageName}"`, {
           renderer: new TerminalRenderer(),
         })
       );
       content.forEach(c => {
-      console.log(marked(c.content, { renderer: new TerminalRenderer() }));
+        console.log(marked(c.content, { renderer: new TerminalRenderer() }));
       });
     })
     .catch(e => {
+      console.error(e);
       console.error(
-        `${e.message}\nTested files: ${e.testedFiles.map(
+        `${e.message}\nTested files: ${e.testedProcess.map(
           f => `\n  * [${f.type}] ${f.fileName}`
         )}`
       );

@@ -1,58 +1,72 @@
 import nock from 'nock';
-import { getFileContent } from './file';
+import { getPackageData } from './file';
+
+function mockAllCalls(packageName) {
+  nock('https://raw.githubusercontent.com')
+    .get(`/${packageName}/master/CHANGELOG.md`)
+    .reply(404, 'file not found');
+  nock('https://raw.githubusercontent.com')
+    .get(`/${packageName}/master/HISTORY.md`)
+    .reply(404, 'file not found');
+  nock('https://api.github.com')
+    .get(`/repos/${packageName}/releases`)
+    .reply(404, 'file not found');
+}
 
 describe('get file content', () => {
   beforeEach(() => {
     nock('https://raw.githubusercontent.com')
       .get('/packages/real/master/CHANGELOG.md')
-      .reply(200, 'foo')
-    ;
-    nock('https://raw.githubusercontent.com')
-      .get(/\/packages\/missing\//)
-      .reply(404, 'file not found')
-    ;
+      .reply(200, 'foo');
 
-    nock('https://raw.githubusercontent.com')
-      .get('/packages/missing/master/CHANGELOG.md')
-      .reply(404, 'file not found')
-    ;
     nock('https://raw.githubusercontent.com')
       .get('/packages/history/master/HISTORY.md')
-      .reply(200, 'some history')
-    ;
-  });
+      .reply(200, 'some history');
 
+    nock('https://api.github.com')
+      .get('/repos/packages/release/releases')
+      .reply(200, '[{"tag_name": "1.0.0"}]');
+
+    mockAllCalls('packages/history');
+    mockAllCalls('packages/real');
+    mockAllCalls('packages/missing');
+    mockAllCalls('packages/release');
+  });
 
   test('fetches file content', () => {
     expect.assertions(1);
 
-    return getFileContent('packages/real')
-      .then(content =>
-        expect(content).toEqual('foo')
-      )
-    ;
+    return getPackageData('packages/real').then(content =>
+      expect(content).toEqual({ content: 'foo', type: 'markdown' })
+    );
   });
 
   test('file not found', () => {
     expect.assertions(1);
 
-    return getFileContent('packages/missing')
-      .then(data => { console.log( data);})
-      .catch(e =>
-        expect(e.message).toEqual('No file found')
-      )
-
-    ;
+    return getPackageData('packages/missing')
+      .then(data => {
+        console.log(data);
+      })
+      .catch(e => expect(e.message).toEqual('No file found'));
   });
 
   test('HISTORY.md is found', () => {
     expect.assertions(1);
 
-    return getFileContent('packages/history')
-      .then(content =>
-        expect(content).toEqual('some history')
-      )
+    return getPackageData('packages/history').then(content =>
+      expect(content).toEqual({ content: 'some history', type: 'markdown' })
+    );
+  });
 
-    ;
+  test('releases is found', () => {
+    expect.assertions(1);
+
+    return getPackageData('packages/release').then(content =>
+      expect(content).toEqual({
+        content: [{ tag_name: '1.0.0' }],
+        type: 'github-release',
+      })
+    );
   });
 });

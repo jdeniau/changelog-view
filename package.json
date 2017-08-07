@@ -20,6 +20,7 @@
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",
+    "babel-plugin-transform-builtin-extend": "^1.1.2",
     "babel-preset-env": "^1.6.0",
     "nock": "^9.0.14",
     "prettier": "^1.5.3"
