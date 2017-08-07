@@ -8,7 +8,7 @@ describe('Github releases', () => {
     );
     expect(webpackVersionList[0].version).toEqual('3.4.1');
     expect(webpackVersionList[0].content).toEqual(
-      '# Bugfixes:\r\n\r\n* fix incorrect warnings about exports when using the DllReferencePlugin'
+      '# 3.4.1\r\n# Bugfixes:\r\n\r\n* fix incorrect warnings about exports when using the DllReferencePlugin'
     );
 
     // sorted versions
