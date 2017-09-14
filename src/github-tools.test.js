@@ -8,5 +8,7 @@ describe('github tools', () => {
     expect(extractNextLink(linkHeader)).toEqual(
       'https://api.github.com/repositories/3678731/releases?page=2'
     );
+
+    expect(extractNextLink(null)).toBe(null);
   });
 });
