@@ -1,16 +1,17 @@
 import marked from 'marked';
 import TerminalRenderer from 'marked-terminal';
 import { getVersionListForPackage } from './file';
+import getPackageInfo from './packageInfo';
 
 function changelogView(packageString) {
-  const matches = packageString.match(/(.*)@(\d+\.\d+\.\d+)/);
+  const packageInfo = getPackageInfo(packageString);
 
-  if (!matches) {
+  if (!packageInfo) {
     console.error(`package "${packageString}" version is not well formatted`);
     process.exit(1);
   }
 
-  const [match, packageName, version] = matches;
+  const { packageName, version } = packageInfo;
 
   getVersionListForPackage(packageName, version)
     .then(versionList => {

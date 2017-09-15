@@ -22,11 +22,41 @@ npm install (-g) changelog-view
 yarn / npm:
 ```sh
 changelog-view <package@currentVersion> [<package@currentVersion> ...]
+```
 
 Example
 ```sh
 changelog-view howardabrams/node-mocks-http@1.5.4 mapado/rest-client-js-sdk@0.14.1
 ```
+
+### In a npm / yarn project ?
+`changelog-view` tries to detect automatically the current version of your lock npm / yarn dependencies, so you can just do:
+
+Imagine you have this package.json:
+```json
+{
+  "dependencies": {
+    "rest-client-sdk": "^1.0.0"
+  }
+}
+```
+
+The following command:
+```sh
+changelog-view rest-client-sdk
+```
+
+Will ouput:
+```md
+... other version
+## [1.0.1] - 2017-07-03 - [YANKED]
+
+### Changed
+
+    * Make urijs implementation work again but might be breaking
+    * Url constructor passed with noTransform = true for better perf and avoid potential bugs
+```
+
 
 ### Features
 The package checks on github if a file named `CHANGELOG.md` or `HISTORY.md` is present.
@@ -37,6 +67,8 @@ It tries to parse the markdown files and filter only version greater than the sp
 
 ### To be done
 
-  * [ ] read yarn / npm / composer lockfiles to guess the package url
-  * [ ] read yarn / npm / composer lockfiles to guess the current version
+  * [x] read npm / yarn lockfiles to guess the package url
+  * [x] read npm / yarn lockfiles to guess the current version
+  * [ ] read composer lockfiles to guess the package url
+  * [ ] read composer lockfiles to guess the current version
   * [ ] make `npx` work
