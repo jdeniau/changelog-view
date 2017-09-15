@@ -29320,18 +29320,67 @@ function innerFetch(url$$1) {
   });
 }
 
-function changelogView(packageString) {
-  var matches = packageString.match(/(.*)@(\d+\.\d+\.\d+)/);
+var GITHUB_REPO_REGEX = /github(?:.com)?[\/:](.*\/[^.]*)/;
 
-  if (!matches) {
+function getPackageInfo(packageString) {
+  var out = getPackageInfoFromString(packageString);
+
+  if (out) {
+    return out;
+  }
+
+  out = getPackageInfoFromPackage(packageString);
+
+  return out;
+}
+
+function getPackageInfoFromPackage(packageString) {
+  var packageInfo = require(packageString + '/package.json');
+
+  if (packageInfo) {
+    var repository = packageInfo.repository;
+    if (!repository) {
+      return null;
+    }
+    var url$$1 = typeof repository === 'string' ? repository : repository.url;
+
+    var repo = url$$1.match(GITHUB_REPO_REGEX);
+
+    return {
+      version: packageInfo.version,
+      packageName: repo && repo[1]
+    };
+  }
+
+  return null;
+}
+
+function getPackageInfoFromString(packageString) {
+  var matches = packageString.match(/(.*)@(\d+\.\d+\.\d+)/);
+  if (matches) {
+    var _matches = slicedToArray(matches, 3),
+        match = _matches[0],
+        packageName = _matches[1],
+        version = _matches[2];
+
+    return {
+      packageName: packageName,
+      version: version
+    };
+  }
+}
+
+function changelogView(packageString) {
+  var packageInfo = getPackageInfo(packageString);
+
+  if (!packageInfo) {
     console.error('package "' + packageString + '" version is not well formatted');
     process.exit(1);
   }
 
-  var _matches = slicedToArray(matches, 3),
-      match = _matches[0],
-      packageName = _matches[1],
-      version = _matches[2];
+  var packageName = packageInfo.packageName,
+      version = packageInfo.version;
+
 
   getVersionListForPackage(packageName, version).then(function (versionList) {
     console.log(marked('# CHANGELOG for "' + packageName + '"', {
