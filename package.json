@@ -24,6 +24,7 @@
     "babel-plugin-transform-builtin-extend": "^1.1.2",
     "babel-polyfill": "^6.26.0",
     "babel-preset-env": "^1.6.0",
+    "lint-staged": "^4.2.0",
     "nock": "^9.0.14",
     "prettier": "^1.6.1",
     "rollup": "^0.49.3",
@@ -33,12 +34,17 @@
     "rollup-plugin-node-resolve": "^3.0.0"
   },
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "prepublish": "npm run clean && npm run check:src && npm run build",
+    "precommit": "lint-staged"
   },
   "jest": {
     "transform": {
       ".+\\.(js)$": "babel-jest",
       ".+\\.(md)$": "<rootDir>/fileTransformer.js"
     }
+  },
+  "lint-staged": {
+    "*.{js,jsx,json}": ["prettier --write", "git add"]
   }
 }
