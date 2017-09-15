@@ -1,6 +1,6 @@
 {
   "name": "changelog-view",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Tool to view changelog of package in console",
   "bin": {
     "changelog-view": "bin/changelog-view"
@@ -34,8 +34,7 @@
   },
   "scripts": {
     "test": "jest",
-    "build":
-      "rollup -c && chmod a+x bin/changelog-view && (git commit -m 'build binary' bin/changelog-view || true)",
+    "build": "rollup -c && chmod a+x bin/changelog-view && (git commit -m 'build binary' bin/changelog-view || true)",
     "prepublishOnly": "npm run build",
     "precommit": "lint-staged"
   },
@@ -46,6 +45,9 @@
     }
   },
   "lint-staged": {
-    "*.{js,jsx,json}": ["prettier --write", "git add"]
+    "*.{js,jsx,json}": [
+      "prettier --write",
+      "git add"
+    ]
   }
 }
