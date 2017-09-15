@@ -2,8 +2,9 @@
   "name": "changelog-view",
   "version": "1.0.0",
   "description": "Tool to view changelog of package in console",
-  "main": "src/index.js",
-  "bin": "src/bin.js",
+  "bin": {
+      "changelog-view": "build/bin.js"
+  },
   "repository": "https://github.com/jdeniau/changelog-view",
   "author": "Julien Deniau <julien.deniau@gmail.com>",
   "license": "MIT",
@@ -35,7 +36,8 @@
   },
   "scripts": {
     "test": "jest",
-    "prepublish": "npm run clean && npm run check:src && npm run build",
+    "build": "rollup -c",
+    "prepublish": "npm run build",
     "precommit": "lint-staged"
   },
   "jest": {

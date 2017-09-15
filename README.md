@@ -16,9 +16,17 @@ npm
 npm install (-g) changelog-view
 ```
 
+or you can use `npx` to automatically run the program
+
 ## Usage
+yarn / npm:
 ```sh
 changelog-view <package@currentVersion> [<package@currentVersion> ...]
+
+```
+With npx:
+```sh
+npx changelog-view <package@currentVersion> [<package@currentVersion> ...]
 ```
 
 Example
