@@ -43,5 +43,6 @@ It tries to parse the markdown files and filter only version greater than the sp
 
 ### To be done
 
-  * [] read yarn / npm / composer lockfiles to guess the package url
-  * [] read yarn / npm / composer lockfiles to guess the current version
+  * [ ] read yarn / npm / composer lockfiles to guess the package url
+  * [ ] read yarn / npm / composer lockfiles to guess the current version
+  * [ ] make `npx` work
