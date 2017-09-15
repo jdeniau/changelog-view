@@ -1,3 +1,8 @@
+jest.mock('fs');
+jest.mock('composer.lock');
+import fs from 'fs';
+import path from 'path';
+import composerFile from 'composer.lock';
 import getPackageInfo from './packageInfo';
 
 describe('package info', () => {
@@ -71,5 +76,16 @@ describe('package info', () => {
     );
 
     expect(getPackageInfo('norepo')).toEqual(null);
+  });
+
+  test('get package info from composer.lock', () => {
+    fs.__setMockFiles({
+      [path.join(process.cwd(), 'composer.lock')]: JSON.stringify(composerFile),
+    });
+
+    expect(getPackageInfo('behat/transliterator')).toEqual({
+      version: 'v1.2.0',
+      packageName: 'Behat/Transliterator',
+    });
   });
 });

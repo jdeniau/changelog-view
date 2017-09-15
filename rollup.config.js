@@ -39,6 +39,8 @@ export default {
   ],
   external: [
     'fs',
+    'path',
+    'process',
     'https',
     'url',
     'http',

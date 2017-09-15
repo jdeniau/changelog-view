@@ -29,8 +29,12 @@ Example
 changelog-view howardabrams/node-mocks-http@1.5.4 mapado/rest-client-js-sdk@0.14.1
 ```
 
-### In a npm / yarn project ?
-`changelog-view` tries to detect automatically the current version of your lock npm / yarn dependencies, so you can just do:
+### In a JavaScript / PHP project ?
+`changelog-view` tries to detect automatically the current version of your currently installed dependencies.
+
+It works fine with `npm` / `yarn` for JavaScript projects, and with `composer` for PHP projects.
+
+, so you can just do:
 
 Imagine you have this package.json:
 ```json
@@ -57,6 +61,20 @@ Will ouput:
     * Url constructor passed with noTransform = true for better perf and avoid potential bugs
 ```
 
+Same for PHP if you do 
+```sh
+changelog-view behat/transliterator
+```
+
+Will output:
+```md
+# CHANGELOG for "Behat/Transliterator"
+
+
+# 1.2.0 / 2017-04-04
+
+    * Stop Transliterator::postProcessText() breaking words containing apostrophes
+```
 
 ### Features
 The package checks on github if a file named `CHANGELOG.md` or `HISTORY.md` is present.
@@ -69,6 +87,6 @@ It tries to parse the markdown files and filter only version greater than the sp
 
   * [x] read npm / yarn lockfiles to guess the package url
   * [x] read npm / yarn lockfiles to guess the current version
-  * [ ] read composer lockfiles to guess the package url
-  * [ ] read composer lockfiles to guess the current version
+  * [x] read composer lockfiles to guess the package url
+  * [x] read composer lockfiles to guess the current version
   * [ ] make `npx` work

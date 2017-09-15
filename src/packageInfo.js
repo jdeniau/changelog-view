@@ -1,36 +1,41 @@
+import fs from 'fs';
+import path from 'path';
+import process from 'process';
+
 const GITHUB_REPO_REGEX = /github(?:.com)?[\/:](.*\/[^.]*)/;
 
 export default function getPackageInfo(packageString) {
-  let out = getPackageInfoFromString(packageString);
+  return getPackageInfoFromString(packageString)
+  || getPackageInfoFromComposer(packageString)
+  || getPackageInfoFromPackage(packageString)
+  ;
+}
 
-  if (out) {
-    return out;
-  }
+function getRepoNameFromUrl(url) {
+    const repo = url.match(GITHUB_REPO_REGEX);
 
-  out = getPackageInfoFromPackage(packageString);
-
-  return out;
+  return repo && repo[1];
 }
 
 function getPackageInfoFromPackage(packageString) {
-  const packageInfo = require(`${packageString}/package.json`);
+  try {
+    const packageInfo = require(`${packageString}/package.json`);
 
-  if (packageInfo) {
-    const repository = packageInfo.repository;
-    if (!repository) {
-      return null;
+    if (packageInfo) {
+      const repository = packageInfo.repository;
+      if (!repository) {
+        return null;
+      }
+      const url = typeof repository === 'string' ? repository : repository.url;
+
+      return {
+        version: packageInfo.version,
+        packageName: getRepoNameFromUrl(url),
+      };
     }
-    const url = typeof repository === 'string' ? repository : repository.url;
-
-    const repo = url.match(GITHUB_REPO_REGEX);
-
-    return {
-      version: packageInfo.version,
-      packageName: repo && repo[1],
-    };
+  } catch (e) {
+    return null;
   }
-
-  return null;
 }
 
 function getPackageInfoFromString(packageString) {
@@ -42,5 +47,28 @@ function getPackageInfoFromString(packageString) {
       packageName,
       version,
     };
+  }
+}
+
+function getPackageInfoFromComposer(packageString) {
+  try {
+    const composerRaw = fs.readFileSync(
+      path.join(process.cwd(), 'composer.lock'),
+      { encoding: 'utf8' }
+    );
+
+    const composerInfo = JSON.parse(composerRaw);
+
+    const packageInfo = composerInfo.packages.find(packageDetail => packageDetail.name === packageString);
+
+    if (packageInfo) {
+      return {
+        packageName: getRepoNameFromUrl(packageInfo.source.url),
+        version: packageInfo.version,
+      };
+    }
+
+  } catch (e) {
+    return null;
   }
 }
