@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Tool to view changelog of package in console",
   "bin": {
-    "changelog-view": "build/bin.js"
+    "changelog-view": "bin/changelog-view"
   },
   "repository": "https://github.com/jdeniau/changelog-view",
   "author": "Julien Deniau <julien.deniau@gmail.com>",
@@ -36,7 +36,7 @@
   },
   "scripts": {
     "test": "jest",
-    "build": "rollup -c",
+    "build": "rollup -c && chmod a+x bin/changelog-view",
     "prepublish": "npm run build",
     "precommit": "lint-staged"
   },
@@ -47,9 +47,6 @@
     }
   },
   "lint-staged": {
-    "*.{js,jsx,json}": [
-      "prettier --write",
-      "git add"
-    ]
+    "*.{js,jsx,json}": ["prettier --write", "git add"]
   }
 }

@@ -3,10 +3,12 @@ import resolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
 import json from 'rollup-plugin-json';
 
+import packageInfo from './package.json';
+
 export default {
   input: 'src/bin.js',
   output: {
-    file: 'build/bin.js',
+    file: packageInfo.bin['changelog-view'],
     format: 'cjs',
   },
   plugins: [
