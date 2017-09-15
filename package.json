@@ -34,8 +34,9 @@
   },
   "scripts": {
     "test": "jest",
-    "build": "rollup -c && chmod a+x bin/changelog-view && git commit -m 'build binary' bin/changelog-view",
-    "prepublish": "npm run build",
+    "build":
+      "rollup -c && chmod a+x bin/changelog-view && (git commit -m 'build binary' bin/changelog-view || true)",
+    "prepublishOnly": "npm run build",
     "precommit": "lint-staged"
   },
   "jest": {
@@ -45,9 +46,6 @@
     }
   },
   "lint-staged": {
-    "*.{js,jsx,json}": [
-      "prettier --write",
-      "git add"
-    ]
+    "*.{js,jsx,json}": ["prettier --write", "git add"]
   }
 }
