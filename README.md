@@ -76,17 +76,22 @@ Will output:
     * Stop Transliterator::postProcessText() breaking words containing apostrophes
 ```
 
-### Features
+## Features
 The package checks on github if a file named `CHANGELOG.md` or `HISTORY.md` is present.
 
 If not, it tries to list the github releases.
 
 It tries to parse the markdown files and filter only version greater than the specified version.
 
-### To be done
+## Automatic langage / dependency management package detection
 
-  * [x] read npm / yarn lockfiles to guess the package url
-  * [x] read npm / yarn lockfiles to guess the current version
-  * [x] read composer lockfiles to guess the package url
-  * [x] read composer lockfiles to guess the current version
+  * [x] [JavaScript] Automatically guess package informations from JavaScript projects
+  * [x] [PHP] Automatically guess package informations from composer.lock
+  * [ ] [Python] Automatically guess package informations from Pipfile.lock (help wanted, does not seems easy to gets the github url as it relies on pypi). Can eventually rely on `pip freeze` command but seems to be "the old way"
+  * [ ] [Go] Automatically guess package informations from Gopkg.lock (help wanted, but maybe easy because dependencies seems to be only github links in Go)
+  * [ ] [Ruby] Automatically guess package informations from Gemfile.lock (help wanted, I did not really understand the Gemfile.lock principle)
+  * [ ] Other languages: feel free to contribute, I just listed languages that came to my mind :)
+
+## To be done
+
   * [ ] make `npx` work
