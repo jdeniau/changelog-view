@@ -12,6 +12,8 @@ var require$$1 = _interopDefault(require('stream'));
 var require$$0 = _interopDefault(require('buffer'));
 var string_decoder = _interopDefault(require('string_decoder'));
 var util = _interopDefault(require('util'));
+var path = _interopDefault(require('path'));
+var process$1 = _interopDefault(require('process'));
 
 var commonjsGlobal = typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
@@ -3011,7 +3013,7 @@ var _speciesConstructor = function (O, D) {
   return C === undefined || (S = _anObject(C)[SPECIES$2]) == undefined ? D : _aFunction(S);
 };
 
-var process$2 = _global.process;
+var process$3 = _global.process;
 var setTask = _global.setImmediate;
 var clearTask = _global.clearImmediate;
 var MessageChannel = _global.MessageChannel;
@@ -3051,9 +3053,9 @@ if (!setTask || !clearTask) {
     delete queue[id];
   };
   // Node.js 0.8-
-  if (_cof(process$2) == 'process') {
+  if (_cof(process$3) == 'process') {
     defer = function (id) {
-      process$2.nextTick(_ctx(run, id, 1));
+      process$3.nextTick(_ctx(run, id, 1));
     };
   // Sphere (JS game engine) Dispatch API
   } else if (Dispatch && Dispatch.now) {
@@ -3095,16 +3097,16 @@ var _task = {
 
 var macrotask = _task.set;
 var Observer = _global.MutationObserver || _global.WebKitMutationObserver;
-var process$3 = _global.process;
+var process$4 = _global.process;
 var Promise$1 = _global.Promise;
-var isNode$1 = _cof(process$3) == 'process';
+var isNode$1 = _cof(process$4) == 'process';
 
 var _microtask = function () {
   var head, last, notify;
 
   var flush = function () {
     var parent, fn;
-    if (isNode$1 && (parent = process$3.domain)) parent.exit();
+    if (isNode$1 && (parent = process$4.domain)) parent.exit();
     while (head) {
       fn = head.fn;
       head = head.next;
@@ -3122,7 +3124,7 @@ var _microtask = function () {
   // Node.js
   if (isNode$1) {
     notify = function () {
-      process$3.nextTick(flush);
+      process$4.nextTick(flush);
     };
   // browsers with MutationObserver
   } else if (Observer) {
@@ -3224,9 +3226,9 @@ var microtask = _microtask();
 
 var PROMISE = 'Promise';
 var TypeError$1 = _global.TypeError;
-var process$1 = _global.process;
+var process$2 = _global.process;
 var $Promise = _global[PROMISE];
-var isNode = _classof(process$1) == 'process';
+var isNode = _classof(process$2) == 'process';
 var empty = function () { /* empty */ };
 var Internal;
 var newGenericPromiseCapability;
@@ -3301,7 +3303,7 @@ var onUnhandled = function (promise) {
     if (unhandled) {
       result = _perform(function () {
         if (isNode) {
-          process$1.emit('unhandledRejection', value, promise);
+          process$2.emit('unhandledRejection', value, promise);
         } else if (handler = _global.onunhandledrejection) {
           handler({ promise: promise, reason: value });
         } else if ((console = _global.console) && console.error) {
@@ -3328,7 +3330,7 @@ var onHandleUnhandled = function (promise) {
   task.call(_global, function () {
     var handler;
     if (isNode) {
-      process$1.emit('rejectionHandled', promise);
+      process$2.emit('rejectionHandled', promise);
     } else if (handler = _global.onrejectionhandled) {
       handler({ promise: promise, reason: promise._v });
     }
@@ -3400,7 +3402,7 @@ if (!USE_NATIVE$1) {
       var reaction = newPromiseCapability(_speciesConstructor(this, $Promise));
       reaction.ok = typeof onFulfilled == 'function' ? onFulfilled : true;
       reaction.fail = typeof onRejected == 'function' && onRejected;
-      reaction.domain = isNode ? process$1.domain : undefined;
+      reaction.domain = isNode ? process$2.domain : undefined;
       this._c.push(reaction);
       if (this._a) this._a.push(reaction);
       if (this._s) notify(this, false);
@@ -5873,12 +5875,12 @@ _metadata.exp({ metadata: function metadata(metadataKey, metadataValue) {
 // https://github.com/rwaldron/tc39-notes/blob/master/es6/2014-09/sept-25.md#510-globalasap-for-enqueuing-a-microtask
 
 var microtask$1 = _microtask();
-var process$4 = _global.process;
-var isNode$2 = _cof(process$4) == 'process';
+var process$5 = _global.process;
+var isNode$2 = _cof(process$5) == 'process';
 
 _export(_export.G, {
   asap: function asap(fn) {
-    var domain = isNode$2 && process$4.domain;
+    var domain = isNode$2 && process$5.domain;
     microtask$1(domain ? domain.bind(fn) : fn);
   }
 });
@@ -29323,36 +29325,36 @@ function innerFetch(url$$1) {
 var GITHUB_REPO_REGEX = /github(?:.com)?[\/:](.*\/[^.]*)/;
 
 function getPackageInfo(packageString) {
-  var out = getPackageInfoFromString(packageString);
+  return getPackageInfoFromString(packageString) || getPackageInfoFromComposer(packageString) || getPackageInfoFromPackage(packageString);
+}
 
-  if (out) {
-    return out;
-  }
+function getRepoNameFromUrl(url$$1) {
+  var repo = url$$1.match(GITHUB_REPO_REGEX);
 
-  out = getPackageInfoFromPackage(packageString);
-
-  return out;
+  return repo && repo[1];
 }
 
 function getPackageInfoFromPackage(packageString) {
-  var packageInfo = require(packageString + '/package.json');
+  try {
+    var packageJsonRaw = fs.readFileSync(path.join(process$1.cwd(), 'node_modules', packageString, 'package.json'), { encoding: 'utf8' });
 
-  if (packageInfo) {
-    var repository = packageInfo.repository;
-    if (!repository) {
-      return null;
+    var packageInfo = JSON.parse(packageJsonRaw);
+
+    if (packageInfo) {
+      var repository = packageInfo.repository;
+      if (!repository) {
+        return null;
+      }
+      var url$$1 = typeof repository === 'string' ? repository : repository.url;
+
+      return {
+        version: packageInfo.version,
+        packageName: getRepoNameFromUrl(url$$1)
+      };
     }
-    var url$$1 = typeof repository === 'string' ? repository : repository.url;
-
-    var repo = url$$1.match(GITHUB_REPO_REGEX);
-
-    return {
-      version: packageInfo.version,
-      packageName: repo && repo[1]
-    };
+  } catch (e) {
+    return null;
   }
-
-  return null;
 }
 
 function getPackageInfoFromString(packageString) {
@@ -29367,6 +29369,27 @@ function getPackageInfoFromString(packageString) {
       packageName: packageName,
       version: version
     };
+  }
+}
+
+function getPackageInfoFromComposer(packageString) {
+  try {
+    var composerRaw = fs.readFileSync(path.join(process$1.cwd(), 'composer.lock'), { encoding: 'utf8' });
+
+    var composerInfo = JSON.parse(composerRaw);
+
+    var packageInfo = composerInfo.packages.find(function (packageDetail) {
+      return packageDetail.name === packageString;
+    });
+
+    if (packageInfo) {
+      return {
+        packageName: getRepoNameFromUrl(packageInfo.source.url),
+        version: packageInfo.version
+      };
+    }
+  } catch (e) {
+    return null;
   }
 }
 
