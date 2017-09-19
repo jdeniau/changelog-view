@@ -7,34 +7,31 @@ It list only the changes between the specified version and the latest version.
 You can see it as a `git diff` between version for changelogs.
 
 ## Installation
-Yarn
-```sh
-yarn install --dev changelog-view
-```
-npm 
-```sh
-npm install (-g) changelog-view
-```
+If you use have `npm>=5.2` installed, you can run changelog-view without installing it. See [#usage](usage).
 
-~~or you can use `npx` to automatically run the program~~ npx does not seems to work with it, maybe an issue with the `@`
+If you prefer installing it, you can install it with npm/yarn :
+```sh
+yarn install --dev changelog-view # yarn
+# or
+npm install (-g) changelog-view # npm
+```
 
 ## Usage
-yarn / npm:
+np: 
 ```sh
-changelog-view <package@currentVersion> [<package@currentVersion> ...]
+npx changelog-view <package@currentVersion> [<package@currentVersion> ...]
 ```
+yarn / npm: the binary is in `node_modules/.bin/changelog-view`
 
 Example
 ```sh
-changelog-view howardabrams/node-mocks-http@1.5.4 mapado/rest-client-js-sdk@0.14.1
+npx changelog-view howardabrams/node-mocks-http@1.5.4 mapado/rest-client-js-sdk@0.14.1
 ```
 
 ### In a JavaScript / PHP project ?
 `changelog-view` tries to detect automatically the current version of your currently installed dependencies.
 
 It works fine with `npm` / `yarn` for JavaScript projects, and with `composer` for PHP projects.
-
-, so you can just do:
 
 Imagine you have this package.json:
 ```json
@@ -47,7 +44,7 @@ Imagine you have this package.json:
 
 The following command:
 ```sh
-changelog-view rest-client-sdk
+npx changelog-view rest-client-sdk
 ```
 
 Will ouput:
@@ -63,7 +60,7 @@ Will ouput:
 
 Same for PHP if you do 
 ```sh
-changelog-view behat/transliterator
+npx changelog-view behat/transliterator
 ```
 
 Will output:
@@ -91,7 +88,3 @@ It tries to parse the markdown files and filter only version greater than the sp
   * [ ] [Go] Automatically guess package informations from Gopkg.lock (help wanted, but maybe easy because dependencies seems to be only github links in Go)
   * [ ] [Ruby] Automatically guess package informations from Gemfile.lock (help wanted, I did not really understand the Gemfile.lock principle)
   * [ ] Other languages: feel free to contribute, I just listed languages that came to my mind :)
-
-## To be done
-
-  * [ ] make `npx` work
