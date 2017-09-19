@@ -6,6 +6,8 @@ Tool view changelog in console.
 It list only the changes between the specified version and the latest version.
 You can see it as a `git diff` between version for changelogs.
 
+![demo](demo.gif)
+
 ## Installation
 If you use have `npm>=5.2` installed, you can run changelog-view without installing it. See [#usage](usage).
 
