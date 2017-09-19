@@ -14,31 +14,46 @@ describe('package info', () => {
 
   test('get package info from package.json', () => {
     // complete repository info
-    jest.mock(
-      'fullrepo/package.json',
-      () => ({
-        version: '2.0.0',
-        repository: {
-          url: 'git+https://github.com/fullrepo/foo.git',
-        },
-      }),
-      { virtual: true }
+    const fullRepoPackageFile = {
+      version: '2.0.0',
+      repository: {
+        url: 'git+https://github.com/fullrepo/foo.git',
+      },
+    };
+
+    const stringRepoPackageFile = {
+      version: '2.0.0',
+      repository: 'git+https://github.com/stringrepo/foo',
+    };
+    const shortRepoPackageFile = {
+      version: '2.0.0',
+      repository: 'github:shortrepo/foo',
+    };
+
+    const fullrepoPath = path.join(
+      process.cwd(),
+      'node_modules/fullrepo/package.json'
     );
+    const stringrepoPath = path.join(
+      process.cwd(),
+      'node_modules/stringrepo/package.json'
+    );
+    const shortrepoPath = path.join(
+      process.cwd(),
+      'node_modules/shortrepo/package.json'
+    );
+
+    fs.__setMockFiles({
+      [fullrepoPath]: JSON.stringify(fullRepoPackageFile),
+      [stringrepoPath]: JSON.stringify(stringRepoPackageFile),
+      [shortrepoPath]: JSON.stringify(shortRepoPackageFile),
+    });
 
     // string repository info
     expect(getPackageInfo('fullrepo')).toEqual({
       packageName: 'fullrepo/foo',
       version: '2.0.0',
     });
-
-    jest.mock(
-      'stringrepo/package.json',
-      () => ({
-        version: '2.0.0',
-        repository: 'git+https://github.com/stringrepo/foo',
-      }),
-      { virtual: true }
-    );
 
     expect(getPackageInfo('stringrepo')).toEqual({
       packageName: 'stringrepo/foo',
@@ -50,15 +65,6 @@ describe('package info', () => {
       packageName: 'fullrepo/foo',
       version: '2.0.0',
     });
-
-    jest.mock(
-      'shortrepo/package.json',
-      () => ({
-        version: '2.0.0',
-        repository: 'github:shortrepo/foo',
-      }),
-      { virtual: true }
-    );
 
     expect(getPackageInfo('shortrepo')).toEqual({
       packageName: 'shortrepo/foo',

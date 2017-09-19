@@ -10,6 +10,7 @@
   "license": "MIT",
   "devDependencies": {
     "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0",
     "babel-plugin-external-helpers": "^6.22.0",
     "babel-plugin-transform-builtin-extend": "^1.1.2",
     "babel-polyfill": "^6.26.0",
@@ -34,7 +35,8 @@
   },
   "scripts": {
     "test": "jest",
-    "build": "rollup -c && chmod a+x bin/changelog-view && (git commit -m 'build binary' bin/changelog-view || true)",
+    "build":
+      "rollup -c && chmod a+x bin/changelog-view && (git commit -m 'build binary' bin/changelog-view || true)",
     "prepublishOnly": "npm run build",
     "precommit": "lint-staged"
   },
@@ -45,9 +47,6 @@
     }
   },
   "lint-staged": {
-    "*.{js,jsx,json}": [
-      "prettier --write",
-      "git add"
-    ]
+    "*.{js,jsx,json}": ["prettier --write", "git add"]
   }
 }

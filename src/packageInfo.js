@@ -5,21 +5,27 @@ import process from 'process';
 const GITHUB_REPO_REGEX = /github(?:.com)?[\/:](.*\/[^.]*)/;
 
 export default function getPackageInfo(packageString) {
-  return getPackageInfoFromString(packageString)
-  || getPackageInfoFromComposer(packageString)
-  || getPackageInfoFromPackage(packageString)
-  ;
+  return (
+    getPackageInfoFromString(packageString) ||
+    getPackageInfoFromComposer(packageString) ||
+    getPackageInfoFromPackage(packageString)
+  );
 }
 
 function getRepoNameFromUrl(url) {
-    const repo = url.match(GITHUB_REPO_REGEX);
+  const repo = url.match(GITHUB_REPO_REGEX);
 
   return repo && repo[1];
 }
 
 function getPackageInfoFromPackage(packageString) {
   try {
-    const packageInfo = require(`${packageString}/package.json`);
+    const packageJsonRaw = fs.readFileSync(
+      path.join(process.cwd(), 'node_modules', packageString, 'package.json'),
+      { encoding: 'utf8' }
+    );
+
+    const packageInfo = JSON.parse(packageJsonRaw);
 
     if (packageInfo) {
       const repository = packageInfo.repository;
@@ -59,7 +65,9 @@ function getPackageInfoFromComposer(packageString) {
 
     const composerInfo = JSON.parse(composerRaw);
 
-    const packageInfo = composerInfo.packages.find(packageDetail => packageDetail.name === packageString);
+    const packageInfo = composerInfo.packages.find(
+      packageDetail => packageDetail.name === packageString
+    );
 
     if (packageInfo) {
       return {
@@ -67,7 +75,6 @@ function getPackageInfoFromComposer(packageString) {
         version: packageInfo.version,
       };
     }
-
   } catch (e) {
     return null;
   }
