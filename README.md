@@ -9,7 +9,7 @@ You can see it as a `git diff` between version for changelogs.
 ![demo](demo.gif)
 
 ## Installation
-If you use have `npm>=5.2` installed, you can run changelog-view without installing it. See [#usage](usage).
+If you use have `npm>=5.2` installed, you can run changelog-view without installing it. See usage.
 
 If you prefer installing it, you can install it with npm/yarn :
 ```sh
