@@ -29086,6 +29086,31 @@ var githubReleasesFetch = function () {
   };
 }();
 
+function _extendableBuiltin5(cls) {
+  function ExtendableBuiltin() {
+    var instance = Reflect.construct(cls, Array.from(arguments));
+    Object.setPrototypeOf(instance, Object.getPrototypeOf(this));
+    return instance;
+  }
+
+  ExtendableBuiltin.prototype = Object.create(cls.prototype, {
+    constructor: {
+      value: cls,
+      enumerable: false,
+      writable: true,
+      configurable: true
+    }
+  });
+
+  if (Object.setPrototypeOf) {
+    Object.setPrototypeOf(ExtendableBuiltin, cls);
+  } else {
+    ExtendableBuiltin.__proto__ = cls;
+  }
+
+  return ExtendableBuiltin;
+}
+
 function _extendableBuiltin3(cls) {
   function ExtendableBuiltin() {
     var instance = Reflect.construct(cls, Array.from(arguments));
@@ -29176,14 +29201,25 @@ var FileNotFound = function (_extendableBuiltin4) {
   return FileNotFound;
 }(_extendableBuiltin3(Error));
 
+var EmptyMarkdownFile = function (_extendableBuiltin6) {
+  inherits(EmptyMarkdownFile, _extendableBuiltin6);
+
+  function EmptyMarkdownFile() {
+    classCallCheck(this, EmptyMarkdownFile);
+    return possibleConstructorReturn(this, (EmptyMarkdownFile.__proto__ || Object.getPrototypeOf(EmptyMarkdownFile)).apply(this, arguments));
+  }
+
+  return EmptyMarkdownFile;
+}(_extendableBuiltin5(Error));
+
 function getPackageData(packageName) {
-  var _this3 = this;
+  var _this4 = this;
 
   var gtThanVersion = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
 
   return new Promise(function () {
     var _ref = asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(resolve, reject) {
-      var i, fileToTest, url$$1, ghFileResult, msg;
+      var i, fileToTest, url$$1, ghFileResult, content, versionList, msg;
       return regeneratorRuntime.wrap(function _callee$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
@@ -29192,14 +29228,14 @@ function getPackageData(packageName) {
 
             case 1:
               if (!(i < TEST_PROCESSES.length)) {
-                _context.next = 39;
+                _context.next = 40;
                 break;
               }
 
               fileToTest = TEST_PROCESSES[i];
               _context.prev = 3;
               _context.t0 = fileToTest.type;
-              _context.next = _context.t0 === 'github-file' ? 7 : _context.t0 === 'github-releases' ? 18 : 25;
+              _context.next = _context.t0 === 'github-file' ? 7 : _context.t0 === 'github-releases' ? 19 : 26;
               break;
 
             case 7:
@@ -29209,72 +29245,78 @@ function getPackageData(packageName) {
 
             case 10:
               ghFileResult = _context.sent;
-              _context.t1 = resolve;
-              _context.next = 14;
+              _context.next = 13;
               return ghFileResult.text();
 
-            case 14:
-              _context.t2 = _context.sent;
-              _context.t3 = {
-                content: _context.t2,
-                type: 'markdown'
-              };
-              (0, _context.t1)(_context.t3);
-              return _context.abrupt('break', 28);
+            case 13:
+              content = _context.sent;
+              versionList = convertMarkdownToVersionList(content);
 
-            case 18:
-              _context.t4 = resolve;
-              _context.next = 21;
-              return githubReleasesFetch(packageName, gtThanVersion);
-
-            case 21:
-              _context.t5 = _context.sent;
-              _context.t6 = {
-                content: _context.t5,
-                type: 'github-release'
-              };
-              (0, _context.t4)(_context.t6);
-              return _context.abrupt('break', 28);
-
-            case 25:
-              msg = 'Unable to determine file type to test: "' + fileToTest.type + '"';
-              throw new Error(msg);
-
-            case 28:
-              _context.next = 36;
-              break;
-
-            case 30:
-              _context.prev = 30;
-              _context.t7 = _context['catch'](3);
-
-              if (!(_context.t7 instanceof FileNotFound)) {
-                _context.next = 34;
+              if (!(versionList.length === 0)) {
+                _context.next = 17;
                 break;
               }
 
-              return _context.abrupt('continue', 36);
+              throw new EmptyMarkdownFile('Empty file');
 
-            case 34:
+            case 17:
 
-              console.error(_context.t7);
-              throw _context.t7;
+              resolve({ content: content, type: 'markdown' });
+              return _context.abrupt('break', 29);
 
-            case 36:
+            case 19:
+              _context.t1 = resolve;
+              _context.next = 22;
+              return githubReleasesFetch(packageName, gtThanVersion);
+
+            case 22:
+              _context.t2 = _context.sent;
+              _context.t3 = {
+                content: _context.t2,
+                type: 'github-release'
+              };
+              (0, _context.t1)(_context.t3);
+              return _context.abrupt('break', 29);
+
+            case 26:
+              msg = 'Unable to determine file type to test: "' + fileToTest.type + '"';
+              throw new Error(msg);
+
+            case 29:
+              _context.next = 37;
+              break;
+
+            case 31:
+              _context.prev = 31;
+              _context.t4 = _context['catch'](3);
+
+              if (!(_context.t4 instanceof FileNotFound || _context.t4 instanceof EmptyMarkdownFile)) {
+                _context.next = 35;
+                break;
+              }
+
+              return _context.abrupt('continue', 37);
+
+            case 35:
+
+              console.error(_context.t4);
+              throw _context.t4;
+
+            case 37:
               i++;
               _context.next = 1;
               break;
 
-            case 39:
+            case 40:
 
               reject(new NoChangelogFoundError('No file found', TEST_PROCESSES));
 
-            case 40:
+            case 41:
             case 'end':
               return _context.stop();
           }
         }
-      }, _callee, _this3, [[3, 30]]);
+      }, _callee, _this4, [[3, 31]]);
     }));
 
     return function (_x2, _x3) {
@@ -29407,12 +29449,18 @@ function changelogView(packageString) {
 
 
   getVersionListForPackage(packageName, version).then(function (versionList) {
-    console.log(marked('# CHANGELOG for "' + packageName + '"', {
+    console.log(marked('# CHANGELOG for "' + packageName + '" (current version: `' + version + '`)', {
       renderer: new markedTerminal$1()
     }));
-    versionList.forEach(function (c) {
-      console.log(marked(c.content, { renderer: new markedTerminal$1() }));
-    });
+    if (versionList.length > 0) {
+      versionList.forEach(function (c) {
+        console.log(marked(c.content, { renderer: new markedTerminal$1() }));
+      });
+    } else {
+      console.log(marked(' > *No changes found for "' + packageName + '"*', {
+        renderer: new markedTerminal$1()
+      }));
+    }
   }).catch(function (e) {
     console.error(e);
     console.error(e.message + '\nTested files: ' + e.testedProcess.map(function (f) {
