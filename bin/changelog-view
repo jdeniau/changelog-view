@@ -29378,7 +29378,8 @@ function getPackageInfoFromComposer(packageString) {
 
     var composerInfo = JSON.parse(composerRaw);
 
-    var packageInfo = composerInfo.packages.find(function (packageDetail) {
+    var packages = composerInfo.packages.concat(composerInfo['packages-dev'] || []);
+    var packageInfo = packages.find(function (packageDetail) {
       return packageDetail.name === packageString;
     });
 
