@@ -33,6 +33,8 @@ class FileNotFound extends Error {
   }
 }
 
+class EmptyMarkdownFile extends Error {}
+
 export function getPackageData(packageName, gtThanVersion = null) {
   return new Promise(async (resolve, reject) => {
     for (let i = 0; i < TEST_PROCESSES.length; i++) {
@@ -44,7 +46,14 @@ export function getPackageData(packageName, gtThanVersion = null) {
             const url = `https://raw.githubusercontent.com/${packageName}/master/${fileToTest.fileName}`;
             const ghFileResult = await innerFetch(url);
 
-            resolve({ content: await ghFileResult.text(), type: 'markdown' });
+            const content = await ghFileResult.text();
+
+            const versionList = convertMarkdownToVersionList(content);
+            if (versionList.length === 0) {
+              throw new EmptyMarkdownFile('Empty file');
+            }
+
+            resolve({ content, type: 'markdown' });
             break;
 
           case 'github-releases':
@@ -60,7 +69,7 @@ export function getPackageData(packageName, gtThanVersion = null) {
             break;
         }
       } catch (e) {
-        if (e instanceof FileNotFound) {
+        if (e instanceof FileNotFound || e instanceof EmptyMarkdownFile) {
           continue;
         }
 
@@ -86,7 +95,9 @@ export function getVersionListForPackage(packageName, gtThanVersion) {
           throw new Error(msg);
       }
     })
-    .then(versionList => filterVersionList(versionList, gtThanVersion));
+    .then(versionList => {
+      return filterVersionList(versionList, gtThanVersion);
+    });
 }
 
 function filterVersionList(versionList, version) {

@@ -16,13 +16,24 @@ function changelogView(packageString) {
   getVersionListForPackage(packageName, version)
     .then(versionList => {
       console.log(
-        marked(`# CHANGELOG for "${packageName}"`, {
-          renderer: new TerminalRenderer(),
-        })
+        marked(
+          `# CHANGELOG for "${packageName}" (current version: \`${version}\`)`,
+          {
+            renderer: new TerminalRenderer(),
+          }
+        )
       );
-      versionList.forEach(c => {
-        console.log(marked(c.content, { renderer: new TerminalRenderer() }));
-      });
+      if (versionList.length > 0) {
+        versionList.forEach(c => {
+          console.log(marked(c.content, { renderer: new TerminalRenderer() }));
+        });
+      } else {
+        console.log(
+          marked(` > *No changes found for "${packageName}"*`, {
+            renderer: new TerminalRenderer(),
+          })
+        );
+      }
     })
     .catch(e => {
       console.error(e);
