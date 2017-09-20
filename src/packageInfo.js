@@ -65,7 +65,10 @@ function getPackageInfoFromComposer(packageString) {
 
     const composerInfo = JSON.parse(composerRaw);
 
-    const packageInfo = composerInfo.packages.find(
+    const packages = composerInfo.packages.concat(
+      composerInfo['packages-dev'] || []
+    );
+    const packageInfo = packages.find(
       packageDetail => packageDetail.name === packageString
     );
 
