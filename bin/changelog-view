@@ -29364,7 +29364,8 @@ function innerFetch(url$$1) {
   });
 }
 
-var GITHUB_REPO_REGEX = /github(?:.com)?[\/:](.*\/[^.]*)/;
+// const GITHUB_REPO_REGEX = /(?:github(?:.com)?)?[\/:](.*\/[^.]*)/;
+var GITHUB_REPO_REGEX = /([^\/:]+\/[^.\/:]+)(?:\.git)?$/;
 
 function getPackageInfo(packageString) {
   return getPackageInfoFromString(packageString) || getPackageInfoFromComposer(packageString) || getPackageInfoFromPackage(packageString);
