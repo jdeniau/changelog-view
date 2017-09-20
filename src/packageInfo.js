@@ -2,7 +2,8 @@ import fs from 'fs';
 import path from 'path';
 import process from 'process';
 
-const GITHUB_REPO_REGEX = /github(?:.com)?[\/:](.*\/[^.]*)/;
+// const GITHUB_REPO_REGEX = /(?:github(?:.com)?)?[\/:](.*\/[^.]*)/;
+const GITHUB_REPO_REGEX = /([^\/:]+\/[^.\/:]+)(?:\.git)?$/;
 
 export default function getPackageInfo(packageString) {
   return (

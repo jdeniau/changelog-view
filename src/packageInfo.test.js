@@ -30,6 +30,11 @@ describe('package info', () => {
       repository: 'github:shortrepo/foo',
     };
 
+    const veryShortRepoPackageFile = {
+      version: '2.1.0',
+      repository: 'veryshortrepo/foo',
+    };
+
     const fullrepoPath = path.join(
       process.cwd(),
       'node_modules/fullrepo/package.json'
@@ -43,10 +48,16 @@ describe('package info', () => {
       'node_modules/shortrepo/package.json'
     );
 
+    const veryShortRepoPath = path.join(
+      process.cwd(),
+      'node_modules/veryshortrepo/package.json'
+    );
+
     fs.__setMockFiles({
       [fullrepoPath]: JSON.stringify(fullRepoPackageFile),
       [stringrepoPath]: JSON.stringify(stringRepoPackageFile),
       [shortrepoPath]: JSON.stringify(shortRepoPackageFile),
+      [veryShortRepoPath]: JSON.stringify(veryShortRepoPackageFile),
     });
 
     // string repository info
@@ -69,6 +80,11 @@ describe('package info', () => {
     expect(getPackageInfo('shortrepo')).toEqual({
       packageName: 'shortrepo/foo',
       version: '2.0.0',
+    });
+
+    expect(getPackageInfo('veryshortrepo')).toEqual({
+      packageName: 'veryshortrepo/foo',
+      version: '2.1.0',
     });
   });
 
