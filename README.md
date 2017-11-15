@@ -1,6 +1,8 @@
 Changelog view
 ===================
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/jdeniau/changelog-view.svg)](https://greenkeeper.io/)
+
 Tool view changelog in console. 
 
 It list only the changes between the specified version and the latest version.
