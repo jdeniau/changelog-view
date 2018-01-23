@@ -31,6 +31,12 @@ export default {
             globals: ['Error', 'Array'],
           },
         ],
+        [
+          'transform-react-jsx',
+          {
+            pragma: 'h',
+          },
+        ],
       ],
     }),
     json(),
@@ -49,6 +55,10 @@ export default {
     'buffer',
     'string_decoder',
     'util',
+    'readline',
+    'assert',
+    'events',
+    'os',
   ],
   banner: '#!/usr/bin/env node',
 };
