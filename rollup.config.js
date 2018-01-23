@@ -20,6 +20,9 @@ export default {
           'env',
           {
             modules: false,
+            targets: {
+              node: '8',
+            },
           },
         ],
       ],

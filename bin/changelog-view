@@ -1331,7 +1331,7 @@ var numToString = function () {
 var pow = function (x, n, acc) {
   return n === 0 ? acc : n % 2 === 1 ? pow(x, n - 1, acc * x) : pow(x * x, n / 2, acc);
 };
-var log$1 = function (x) {
+var log = function (x) {
   var n = 0;
   var x2 = x;
   while (x2 >= 4096) {
@@ -1368,7 +1368,7 @@ _export(_export.P + _export.F * (!!$toFixed && (
       x = -x;
     }
     if (x > 1e-21) {
-      e = log$1(x * pow(2, 69, 1)) - 69;
+      e = log(x * pow(2, 69, 1)) - 69;
       z = e < 0 ? x * pow(2, -e, 1) : x / pow(2, e, 1);
       z *= 0x10000000000000;
       e = 52 - e;
@@ -33533,14 +33533,10 @@ function intersects(r1, r2, loose) {
 });
 
 function convertGithubReleasesToVersionList(jsonReleases) {
-  return jsonReleases.map(function (release) {
-    return {
-      version: semver.clean(release.tag_name),
-      content: '# ' + semver.clean(release.tag_name) + '\r\n' + release.body
-    };
-  }).sort(function (a, b) {
-    return semver.compare(b.version, a.version);
-  });
+  return jsonReleases.map(release => ({
+    version: semver.clean(release.tag_name),
+    content: `# ${semver.clean(release.tag_name)}\r\n${release.body}`
+  })).sort((a, b) => semver.compare(b.version, a.version));
 }
 
 'use strict';
@@ -33714,8 +33710,8 @@ var findVersions = function (str, opts) {
 };
 
 function getTokens(content) {
-  var lexer = new marked.Lexer();
-  var tokens = lexer.lex(content);
+  const lexer = new marked.Lexer();
+  const tokens = lexer.lex(content);
 
   return tokens;
 }
@@ -33724,33 +33720,33 @@ function semverize(title) {
   title = title.replace(/(\d+\.\d+)\.x/, '$1.99999');
   title = title.replace(/(\d+)\.x/, '$1.99999.99999');
 
-  var versions = findVersions(title, { loose: true });
+  const versions = findVersions(title, { loose: true });
   if (!versions || versions.length === 0) {
     return null;
   }
 
-  var version = versions.sort(semver.compare).pop();
+  const version = versions.sort(semver.compare).pop();
 
   return version;
 }
 
 function getVersionFromTitle(title) {
-  var version = semverize(title);
+  const version = semverize(title);
   if (!semver.valid(version)) {
 
     return null;
   }
 
   return {
-    version: version
+    version
   };
 }
 
 function reduceTokens(tokens) {
-  var currentVersion = null;
-  return tokens.reduce(function (curr, token) {
+  let currentVersion = null;
+  return tokens.reduce((curr, token) => {
     if (token.type === 'heading') {
-      var version = getVersionFromTitle(token.text);
+      const version = getVersionFromTitle(token.text);
       if (version) {
         currentVersion = version.version;
 
@@ -33769,24 +33765,22 @@ function reduceTokens(tokens) {
 }
 
 function convertMarkdownToVersionList(markdown) {
-  var tokens = getTokens(markdown);
+  const tokens = getTokens(markdown);
 
-  var reducedTokens = reduceTokens(tokens);
-  return Object.keys(reducedTokens).map(function (version) {
+  const reducedTokens = reduceTokens(tokens);
+  return Object.keys(reducedTokens).map(version => {
     // console.log(version, tokens);
-    var tokens = reducedTokens[version];
+    const tokens = reducedTokens[version];
     tokens.links = {};
-    var content = marked.parser(tokens, {
+    const content = marked.parser(tokens, {
       renderer: markedToMd(new marked.Renderer())
     });
 
     return {
-      version: version,
-      content: content
+      version,
+      content
     };
-  }).sort(function (a, b) {
-    return semver.compare(b.version, a.version);
-  });
+  }).sort((a, b) => semver.compare(b.version, a.version));
 }
 
 function extractNextLink(linkHeader) {
@@ -33794,323 +33788,14 @@ function extractNextLink(linkHeader) {
     return null;
   }
 
-  var matches = linkHeader.match(/<([^>]*)>/);
+  const matches = linkHeader.match(/<([^>]*)>/);
 
   if (matches) {
     return matches[1];
   }
 }
 
-var asyncGenerator = function () {
-  function AwaitValue(value) {
-    this.value = value;
-  }
-
-  function AsyncGenerator(gen) {
-    var front, back;
-
-    function send(key, arg) {
-      return new Promise(function (resolve, reject) {
-        var request = {
-          key: key,
-          arg: arg,
-          resolve: resolve,
-          reject: reject,
-          next: null
-        };
-
-        if (back) {
-          back = back.next = request;
-        } else {
-          front = back = request;
-          resume(key, arg);
-        }
-      });
-    }
-
-    function resume(key, arg) {
-      try {
-        var result = gen[key](arg);
-        var value = result.value;
-
-        if (value instanceof AwaitValue) {
-          Promise.resolve(value.value).then(function (arg) {
-            resume("next", arg);
-          }, function (arg) {
-            resume("throw", arg);
-          });
-        } else {
-          settle(result.done ? "return" : "normal", result.value);
-        }
-      } catch (err) {
-        settle("throw", err);
-      }
-    }
-
-    function settle(type, value) {
-      switch (type) {
-        case "return":
-          front.resolve({
-            value: value,
-            done: true
-          });
-          break;
-
-        case "throw":
-          front.reject(value);
-          break;
-
-        default:
-          front.resolve({
-            value: value,
-            done: false
-          });
-          break;
-      }
-
-      front = front.next;
-
-      if (front) {
-        resume(front.key, front.arg);
-      } else {
-        back = null;
-      }
-    }
-
-    this._invoke = send;
-
-    if (typeof gen.return !== "function") {
-      this.return = undefined;
-    }
-  }
-
-  if (typeof Symbol === "function" && Symbol.asyncIterator) {
-    AsyncGenerator.prototype[Symbol.asyncIterator] = function () {
-      return this;
-    };
-  }
-
-  AsyncGenerator.prototype.next = function (arg) {
-    return this._invoke("next", arg);
-  };
-
-  AsyncGenerator.prototype.throw = function (arg) {
-    return this._invoke("throw", arg);
-  };
-
-  AsyncGenerator.prototype.return = function (arg) {
-    return this._invoke("return", arg);
-  };
-
-  return {
-    wrap: function (fn) {
-      return function () {
-        return new AsyncGenerator(fn.apply(this, arguments));
-      };
-    },
-    await: function (value) {
-      return new AwaitValue(value);
-    }
-  };
-}();
-
-
-
-var asyncToGenerator = function (fn) {
-  return function () {
-    var gen = fn.apply(this, arguments);
-    return new Promise(function (resolve, reject) {
-      function step(key, arg) {
-        try {
-          var info = gen[key](arg);
-          var value = info.value;
-        } catch (error) {
-          reject(error);
-          return;
-        }
-
-        if (info.done) {
-          resolve(value);
-        } else {
-          return Promise.resolve(value).then(function (value) {
-            step("next", value);
-          }, function (err) {
-            step("throw", err);
-          });
-        }
-      }
-
-      return step("next");
-    });
-  };
-};
-
-var classCallCheck = function (instance, Constructor) {
-  if (!(instance instanceof Constructor)) {
-    throw new TypeError("Cannot call a class as a function");
-  }
-};
-
-var createClass = function () {
-  function defineProperties(target, props) {
-    for (var i = 0; i < props.length; i++) {
-      var descriptor = props[i];
-      descriptor.enumerable = descriptor.enumerable || false;
-      descriptor.configurable = true;
-      if ("value" in descriptor) descriptor.writable = true;
-      Object.defineProperty(target, descriptor.key, descriptor);
-    }
-  }
-
-  return function (Constructor, protoProps, staticProps) {
-    if (protoProps) defineProperties(Constructor.prototype, protoProps);
-    if (staticProps) defineProperties(Constructor, staticProps);
-    return Constructor;
-  };
-}();
-
-
-
-
-
-
-
-
-
-var inherits = function (subClass, superClass) {
-  if (typeof superClass !== "function" && superClass !== null) {
-    throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
-  }
-
-  subClass.prototype = Object.create(superClass && superClass.prototype, {
-    constructor: {
-      value: subClass,
-      enumerable: false,
-      writable: true,
-      configurable: true
-    }
-  });
-  if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
-};
-
-
-
-
-
-
-
-
-
-
-
-var possibleConstructorReturn = function (self, call) {
-  if (!self) {
-    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-  }
-
-  return call && (typeof call === "object" || typeof call === "function") ? call : self;
-};
-
-
-
-
-
-var slicedToArray = function () {
-  function sliceIterator(arr, i) {
-    var _arr = [];
-    var _n = true;
-    var _d = false;
-    var _e = undefined;
-
-    try {
-      for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
-        _arr.push(_s.value);
-
-        if (i && _arr.length === i) break;
-      }
-    } catch (err) {
-      _d = true;
-      _e = err;
-    } finally {
-      try {
-        if (!_n && _i["return"]) _i["return"]();
-      } finally {
-        if (_d) throw _e;
-      }
-    }
-
-    return _arr;
-  }
-
-  return function (arr, i) {
-    if (Array.isArray(arr)) {
-      return arr;
-    } else if (Symbol.iterator in Object(arr)) {
-      return sliceIterator(arr, i);
-    } else {
-      throw new TypeError("Invalid attempt to destructure non-iterable instance");
-    }
-  };
-}();
-
-var githubReleasesFetch = function () {
-  var _ref3 = asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(packageName, gtThanVersion) {
-    var url$$1, foundMatchingVersion, nextLink, result, ghReleaseResult, currentResult;
-    return regeneratorRuntime.wrap(function _callee2$(_context2) {
-      while (1) {
-        switch (_context2.prev = _context2.next) {
-          case 0:
-            url$$1 = 'https://api.github.com/repos/' + packageName + '/releases';
-            foundMatchingVersion = false;
-            
-            result = [];
-
-          case 4:
-            _context2.next = 6;
-            return innerFetch(url$$1);
-
-          case 6:
-            ghReleaseResult = _context2.sent;
-            _context2.next = 9;
-            return ghReleaseResult.json();
-
-          case 9:
-            currentResult = _context2.sent;
-
-
-            foundMatchingVersion = currentResult.filter(function (item) {
-              return semver.eq(item.tag_name, gtThanVersion);
-            }).length > 0;
-
-            result = result.concat(currentResult);
-
-            if (!foundMatchingVersion) {
-              url$$1 = extractNextLink(ghReleaseResult.headers.get('link'));
-            }
-
-          case 13:
-            if (!foundMatchingVersion && url$$1) {
-              _context2.next = 4;
-              break;
-            }
-
-          case 14:
-            return _context2.abrupt('return', result);
-
-          case 15:
-          case 'end':
-            return _context2.stop();
-        }
-      }
-    }, _callee2, this);
-  }));
-
-  return function githubReleasesFetch(_x3, _x4) {
-    return _ref3.apply(this, arguments);
-  };
-}();
-
-function _extendableBuiltin5(cls) {
+function _extendableBuiltin3(cls) {
   function ExtendableBuiltin() {
     var instance = Reflect.construct(cls, Array.from(arguments));
     Object.setPrototypeOf(instance, Object.getPrototypeOf(this));
@@ -34135,7 +33820,7 @@ function _extendableBuiltin5(cls) {
   return ExtendableBuiltin;
 }
 
-function _extendableBuiltin3(cls) {
+function _extendableBuiltin2(cls) {
   function ExtendableBuiltin() {
     var instance = Reflect.construct(cls, Array.from(arguments));
     Object.setPrototypeOf(instance, Object.getPrototypeOf(this));
@@ -34185,7 +33870,7 @@ function _extendableBuiltin(cls) {
   return ExtendableBuiltin;
 }
 
-var TEST_PROCESSES = [{
+const TEST_PROCESSES = [{
   type: 'github-file',
   fileName: 'CHANGELOG.md'
 }, {
@@ -34195,170 +33880,84 @@ var TEST_PROCESSES = [{
   type: 'github-releases'
 }];
 
-var NoChangelogFoundError = function (_extendableBuiltin2) {
-  inherits(NoChangelogFoundError, _extendableBuiltin2);
-
-  function NoChangelogFoundError(message, testedProcess) {
-    classCallCheck(this, NoChangelogFoundError);
-
-    var _this = possibleConstructorReturn(this, (NoChangelogFoundError.__proto__ || Object.getPrototypeOf(NoChangelogFoundError)).call(this, message));
-
-    _this.testedProcess = testedProcess;
-    return _this;
+class NoChangelogFoundError extends _extendableBuiltin(Error) {
+  constructor(message, testedProcess) {
+    super(message);
+    this.testedProcess = testedProcess;
   }
+}
 
-  return NoChangelogFoundError;
-}(_extendableBuiltin(Error));
-
-var FileNotFound = function (_extendableBuiltin4) {
-  inherits(FileNotFound, _extendableBuiltin4);
-
-  function FileNotFound(response) {
-    classCallCheck(this, FileNotFound);
-
-    var _this2 = possibleConstructorReturn(this, (FileNotFound.__proto__ || Object.getPrototypeOf(FileNotFound)).call(this));
-
-    _this2.response = response;
-    return _this2;
+class FileNotFound extends _extendableBuiltin2(Error) {
+  constructor(response) {
+    super();
+    this.response = response;
   }
+}
 
-  return FileNotFound;
-}(_extendableBuiltin3(Error));
+class EmptyMarkdownFile extends _extendableBuiltin3(Error) {}
 
-var EmptyMarkdownFile = function (_extendableBuiltin6) {
-  inherits(EmptyMarkdownFile, _extendableBuiltin6);
+async function getPackageData(packageName, gtThanVersion = null) {
+  for (let i = 0; i < TEST_PROCESSES.length; i++) {
+    const fileToTest = TEST_PROCESSES[i];
 
-  function EmptyMarkdownFile() {
-    classCallCheck(this, EmptyMarkdownFile);
-    return possibleConstructorReturn(this, (EmptyMarkdownFile.__proto__ || Object.getPrototypeOf(EmptyMarkdownFile)).apply(this, arguments));
-  }
+    try {
+      switch (fileToTest.type) {
+        case 'github-file':
+          const url$$1 = `https://raw.githubusercontent.com/${packageName}/master/${fileToTest.fileName}`;
+          const ghFileResult = await innerFetch(url$$1);
 
-  return EmptyMarkdownFile;
-}(_extendableBuiltin5(Error));
+          const content = await ghFileResult.text();
 
-var getPackageData = function () {
-  var _ref = asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(packageName) {
-    var gtThanVersion = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-    var i, fileToTest, url$$1, ghFileResult, content, versionList, msg;
-    return regeneratorRuntime.wrap(function _callee$(_context) {
-      while (1) {
-        switch (_context.prev = _context.next) {
-          case 0:
-            i = 0;
-
-          case 1:
-            if (!(i < TEST_PROCESSES.length)) {
-              _context.next = 37;
-              break;
-            }
-
-            fileToTest = TEST_PROCESSES[i];
-            _context.prev = 3;
-            _context.t0 = fileToTest.type;
-            _context.next = _context.t0 === 'github-file' ? 7 : _context.t0 === 'github-releases' ? 19 : 24;
-            break;
-
-          case 7:
-            url$$1 = 'https://raw.githubusercontent.com/' + packageName + '/master/' + fileToTest.fileName;
-            _context.next = 10;
-            return innerFetch(url$$1);
-
-          case 10:
-            ghFileResult = _context.sent;
-            _context.next = 13;
-            return ghFileResult.text();
-
-          case 13:
-            content = _context.sent;
-            versionList = convertMarkdownToVersionList(content);
-
-            if (!(versionList.length === 0)) {
-              _context.next = 17;
-              break;
-            }
-
+          const versionList = convertMarkdownToVersionList(content);
+          if (versionList.length === 0) {
             throw new EmptyMarkdownFile('Empty file');
+          }
 
-          case 17:
-            return _context.abrupt('return', { content: content, type: 'markdown' });
+          return { content, type: 'markdown' };
+          break;
 
-          case 19:
-            _context.next = 21;
-            return githubReleasesFetch(packageName, gtThanVersion);
+        case 'github-releases':
+          return {
+            content: await githubReleasesFetch(packageName, gtThanVersion),
+            type: 'github-release'
+          };
+          break;
 
-          case 21:
-            _context.t1 = _context.sent;
-            return _context.abrupt('return', {
-              content: _context.t1,
-              type: 'github-release'
-            });
-
-          case 24:
-            msg = 'Unable to determine file type to test: "' + fileToTest.type + '"';
-            throw new Error(msg);
-
-          case 27:
-            _context.next = 34;
-            break;
-
-          case 29:
-            _context.prev = 29;
-            _context.t2 = _context['catch'](3);
-
-            if (!(_context.t2 instanceof FileNotFound || _context.t2 instanceof EmptyMarkdownFile)) {
-              _context.next = 33;
-              break;
-            }
-
-            return _context.abrupt('continue', 34);
-
-          case 33:
-            throw _context.t2;
-
-          case 34:
-            i++;
-            _context.next = 1;
-            break;
-
-          case 37:
-            throw new NoChangelogFoundError('No file found', TEST_PROCESSES);
-
-          case 38:
-          case 'end':
-            return _context.stop();
-        }
+        default:
+          const msg = `Unable to determine file type to test: "${fileToTest.type}"`;
+          throw new Error(msg);
+          break;
       }
-    }, _callee, this, [[3, 29]]);
-  }));
+    } catch (e) {
+      if (e instanceof FileNotFound || e instanceof EmptyMarkdownFile) {
+        continue;
+      }
 
-  return function getPackageData(_x2) {
-    return _ref.apply(this, arguments);
-  };
-}();
+      throw e;
+    }
+  }
+
+  throw new NoChangelogFoundError('No file found', TEST_PROCESSES);
+}
 
 function getVersionListForPackage(packageName, gtThanVersion) {
-  return getPackageData(packageName, gtThanVersion).then(function (_ref2) {
-    var content = _ref2.content,
-        type = _ref2.type;
-
+  return getPackageData(packageName, gtThanVersion).then(({ content, type }) => {
     switch (type) {
       case 'markdown':
         return convertMarkdownToVersionList(content);
       case 'github-release':
         return convertGithubReleasesToVersionList(content);
       default:
-        var msg = 'Unable to determine how to convert version list from "' + type + '"';
+        const msg = `Unable to determine how to convert version list from "${type}"`;
         throw new Error(msg);
     }
-  }).then(function (versionList) {
+  }).then(versionList => {
     return filterVersionList(versionList, gtThanVersion);
   });
 }
 
 function filterVersionList(versionList, version) {
-  return versionList.filter(function (versionContent) {
-    return semver.gt(versionContent.version, version);
-  });
+  return versionList.filter(versionContent => semver.gt(versionContent.version, version));
 }
 
 function innerFetch(url$$1) {
@@ -34366,7 +33965,7 @@ function innerFetch(url$$1) {
     headers: {
       'User-Agent': 'changelog-view'
     }
-  }).then(function (resp) {
+  }).then(resp => {
     if (resp.status >= 300) {
       throw new FileNotFound(resp);
     }
@@ -34375,31 +33974,53 @@ function innerFetch(url$$1) {
   });
 }
 
+async function githubReleasesFetch(packageName, gtThanVersion) {
+  let url$$1 = `https://api.github.com/repos/${packageName}/releases`;
+  let foundMatchingVersion = false;
+  let result = [];
+
+  do {
+    const ghReleaseResult = await innerFetch(url$$1);
+
+    const currentResult = await ghReleaseResult.json();
+
+    foundMatchingVersion = currentResult.filter(item => semver.eq(item.tag_name, gtThanVersion)).length > 0;
+
+    result = result.concat(currentResult);
+
+    if (!foundMatchingVersion) {
+      url$$1 = extractNextLink(ghReleaseResult.headers.get('link'));
+    }
+  } while (!foundMatchingVersion && url$$1);
+
+  return result;
+}
+
 // const GITHUB_REPO_REGEX = /(?:github(?:.com)?)?[\/:](.*\/[^.]*)/;
-var GITHUB_REPO_REGEX = /([^\/:]+\/[^.\/:]+)(?:\.git)?$/;
+const GITHUB_REPO_REGEX = /([^\/:]+\/[^.\/:]+)(?:\.git)?$/;
 
 function getPackageInfo(packageString) {
   return getPackageInfoFromString(packageString) || getPackageInfoFromComposer(packageString) || getPackageInfoFromPackage(packageString);
 }
 
 function getRepoNameFromUrl(url$$1) {
-  var repo = url$$1.match(GITHUB_REPO_REGEX);
+  const repo = url$$1.match(GITHUB_REPO_REGEX);
 
   return repo && repo[1];
 }
 
 function getPackageInfoFromPackage(packageString) {
   try {
-    var packageJsonRaw = fs.readFileSync(path.join(process$1.cwd(), 'node_modules', packageString, 'package.json'), { encoding: 'utf8' });
+    const packageJsonRaw = fs.readFileSync(path.join(process$1.cwd(), 'node_modules', packageString, 'package.json'), { encoding: 'utf8' });
 
-    var packageInfo = JSON.parse(packageJsonRaw);
+    const packageInfo = JSON.parse(packageJsonRaw);
 
     if (packageInfo) {
-      var repository = packageInfo.repository;
+      const repository = packageInfo.repository;
       if (!repository) {
         return null;
       }
-      var url$$1 = typeof repository === 'string' ? repository : repository.url;
+      const url$$1 = typeof repository === 'string' ? repository : repository.url;
 
       return {
         version: packageInfo.version,
@@ -34412,30 +34033,25 @@ function getPackageInfoFromPackage(packageString) {
 }
 
 function getPackageInfoFromString(packageString) {
-  var matches = packageString.match(/(.*)@(\d+\.\d+\.\d+)/);
+  const matches = packageString.match(/(.*)@(\d+\.\d+\.\d+)/);
   if (matches) {
-    var _matches = slicedToArray(matches, 3),
-        match = _matches[0],
-        packageName = _matches[1],
-        version = _matches[2];
+    const [match, packageName, version] = matches;
 
     return {
-      packageName: packageName,
-      version: version
+      packageName,
+      version
     };
   }
 }
 
 function getPackageInfoFromComposer(packageString) {
   try {
-    var composerRaw = fs.readFileSync(path.join(process$1.cwd(), 'composer.lock'), { encoding: 'utf8' });
+    const composerRaw = fs.readFileSync(path.join(process$1.cwd(), 'composer.lock'), { encoding: 'utf8' });
 
-    var composerInfo = JSON.parse(composerRaw);
+    const composerInfo = JSON.parse(composerRaw);
 
-    var packages = composerInfo.packages.concat(composerInfo['packages-dev'] || []);
-    var packageInfo = packages.find(function (packageDetail) {
-      return packageDetail.name === packageString;
-    });
+    const packages = composerInfo.packages.concat(composerInfo['packages-dev'] || []);
+    const packageInfo = packages.find(packageDetail => packageDetail.name === packageString);
 
     if (packageInfo) {
       return {
@@ -34455,57 +34071,53 @@ function terminalMarked(content) {
 }
 
 function changelogView(packageString) {
-  var packageInfo = getPackageInfo(packageString);
+  const packageInfo = getPackageInfo(packageString);
 
   if (!packageInfo) {
-    return new Promise(function (resolve, reject) {
+    return new Promise((resolve, reject) => {
       reject({
-        message: terminalMarked(' > *package "' + packageString + '" version is not well formatted*'),
+        message: terminalMarked(` > *package "${packageString}" version is not well formatted*`),
         type: 'error'
       });
     });
   }
 
-  var packageName = packageInfo.packageName,
-      version = packageInfo.version;
+  const { packageName, version } = packageInfo;
 
-
-  return getVersionListForPackage(packageName, version).then(function (versionList) {
-    var message = terminalMarked('# CHANGELOG for "' + packageName + '" (current version: `' + version + '`)');
+  return getVersionListForPackage(packageName, version).then(versionList => {
+    let message = terminalMarked(`# CHANGELOG for "${packageName}" (current version: \`${version}\`)`);
 
     if (versionList.length > 0) {
-      versionList.forEach(function (c) {
+      versionList.forEach(c => {
         message = message + terminalMarked(c.content);
       });
     } else {
-      message = message + terminalMarked(' > *No changes found for "' + packageName + '"*');
+      message = message + terminalMarked(` > *No changes found for "${packageName}"*`);
     }
 
     return {
-      message: message,
+      message,
       type: 'success'
     };
-  }).catch(function (error) {
-    var message = e.message + '\nTested files: ' + e.testedProcess.map(function (f) {
-      return '\n  * [' + f.type + '] ' + f.fileName;
-    });
+  }).catch(error => {
+    const message = `${e.message}\nTested files: ${e.testedProcess.map(f => `\n  * [${f.type}] ${f.fileName}`)}`;
     return {
       type: 'error',
-      message: message,
-      error: error
+      message,
+      error
     };
   });
 }
 
-var changelogViewCache = {};
+const changelogViewCache = {};
 
 function cachedChangelogView(packageString) {
-  return new Promise(function (resolve, reject) {
+  return new Promise((resolve, reject) => {
     if (!changelogViewCache[packageString]) {
-      changelogView(packageString).then(function (result) {
+      changelogView(packageString).then(result => {
         changelogViewCache[packageString] = result;
         resolve(changelogViewCache[packageString]);
-      }).catch(function (result) {
+      }).catch(result => {
         changelogViewCache[packageString] = result;
         reject(changelogViewCache[packageString]);
       });
@@ -34519,89 +34131,74 @@ function cachedChangelogView(packageString) {
   });
 }
 
-var PackageListChangelog = function (_Component) {
-  inherits(PackageListChangelog, _Component);
+class PackageListChangelog extends ink_2 {
+  constructor(props) {
+    super(props);
 
-  function PackageListChangelog(props) {
-    classCallCheck(this, PackageListChangelog);
+    this.handleTabChange = this.handleTabChange.bind(this);
 
-    var _this = possibleConstructorReturn(this, (PackageListChangelog.__proto__ || Object.getPrototypeOf(PackageListChangelog)).call(this, props));
-
-    _this.handleTabChange = _this.handleTabChange.bind(_this);
-
-    _this.state = {
+    this.state = {
       activeTabName: null,
       changelogViewResult: null
     };
-    return _this;
   }
 
-  createClass(PackageListChangelog, [{
-    key: 'handleTabChange',
-    value: function handleTabChange(name, activeTab) {
-      var _this2 = this;
+  handleTabChange(name, activeTab) {
+    this.setState({
+      activeTabName: name,
+      changelogViewResult: null
+    });
 
+    cachedChangelogView(name).then(result => {
       this.setState({
-        activeTabName: name,
-        changelogViewResult: null
+        changelogViewResult: result
       });
-
-      cachedChangelogView(name).then(function (result) {
-        _this2.setState({
-          changelogViewResult: result
-        });
-      }).catch(function (result) {
-        _this2.setState({
-          changelogViewResult: result
-        });
+    }).catch(result => {
+      this.setState({
+        changelogViewResult: result
       });
-    }
-  }, {
-    key: 'render',
-    value: function render() {
-      var packageStringList = this.props.packageStringList;
+    });
+  }
 
+  render() {
+    const { packageStringList } = this.props;
 
-      return ink_3(
+    return ink_3(
+      'div',
+      null,
+      ink_3(
         'div',
         null,
-        ink_3(
-          'div',
+        this.state.changelogViewResult ? ink_3(
+          ink_5,
           null,
-          this.state.changelogViewResult ? ink_3(
-            ink_5,
-            null,
-            this.state.changelogViewResult.message
-          ) : ink_3(
-            ink_5,
-            null,
-            ink_3(dist$1, { orange: true }),
-            ' Loading'
-          )
-        ),
-        ink_3(
-          dist_1,
-          { onChange: this.handleTabChange },
-          packageStringList.map(function (packageString) {
-            return ink_3(
-              dist_2,
-              { name: packageString },
-              packageString
-            );
-          })
+          this.state.changelogViewResult.message
+        ) : ink_3(
+          ink_5,
+          null,
+          ink_3(dist$1, { orange: true }),
+          ' Loading'
         )
-      );
-    }
-  }]);
-  return PackageListChangelog;
-}(ink_2);
+      ),
+      ink_3(
+        dist_1,
+        { onChange: this.handleTabChange },
+        packageStringList.map(packageString => ink_3(
+          dist_2,
+          { name: packageString },
+          packageString
+        ))
+      )
+    );
+  }
+}
 
 function packageListChangeLog(packageStringList) {
   ink_9(ink_3(PackageListChangelog, { packageStringList: packageStringList }));
 }
 
 // #!/usr/bin/env node
-var args = minimist(process.argv.slice(2), {
+const args = minimist(process.argv.slice(2), {
   alias: {
     help: 'h'
   }
@@ -34609,7 +34206,7 @@ var args = minimist(process.argv.slice(2), {
 
 if (args.help || args._.length === 0) {
   // If they didn't ask for help, then this is not a "success"
-  var log = args.help ? console.log : console.error;
+  const log = args.help ? console.log : console.error;
   log('Usage: changelog-view <package@currentVersion> [<package@currentVersion> ...]');
   log('');
   log('  See changelogs for your dependencies.');
