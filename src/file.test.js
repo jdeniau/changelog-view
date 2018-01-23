@@ -21,7 +21,7 @@ describe('get file content', () => {
 
     nock('https://raw.githubusercontent.com')
       .get('/packages/history/master/HISTORY.md')
-      .reply(200, 'some history');
+      .reply(200, '## 1.0.0\nsome history');
 
     nock('https://api.github.com')
       .get('/repos/packages/release/releases')
@@ -51,9 +51,11 @@ describe('get file content', () => {
   test('fetches file content', () => {
     expect.assertions(1);
 
-    return getPackageData('packages/real').then(content =>
-      expect(content).toEqual({ content: 'foo', type: 'markdown' })
-    );
+    return getPackageData('packages/real')
+      .then(content => {
+        console.log(content);
+      })
+      .catch(e => expect(e.message).toEqual('No file found'));
   });
 
   test('file not found', () => {
@@ -70,7 +72,10 @@ describe('get file content', () => {
     expect.assertions(1);
 
     return getPackageData('packages/history').then(content =>
-      expect(content).toEqual({ content: 'some history', type: 'markdown' })
+      expect(content).toEqual({
+        content: '## 1.0.0\nsome history',
+        type: 'markdown',
+      })
     );
   });
 
