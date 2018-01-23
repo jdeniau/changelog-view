@@ -35,51 +35,48 @@ class FileNotFound extends Error {
 
 class EmptyMarkdownFile extends Error {}
 
-export function getPackageData(packageName, gtThanVersion = null) {
-  return new Promise(async (resolve, reject) => {
-    for (let i = 0; i < TEST_PROCESSES.length; i++) {
-      const fileToTest = TEST_PROCESSES[i];
+export async function getPackageData(packageName, gtThanVersion = null) {
+  for (let i = 0; i < TEST_PROCESSES.length; i++) {
+    const fileToTest = TEST_PROCESSES[i];
 
-      try {
-        switch (fileToTest.type) {
-          case 'github-file':
-            const url = `https://raw.githubusercontent.com/${packageName}/master/${fileToTest.fileName}`;
-            const ghFileResult = await innerFetch(url);
+    try {
+      switch (fileToTest.type) {
+        case 'github-file':
+          const url = `https://raw.githubusercontent.com/${packageName}/master/${fileToTest.fileName}`;
+          const ghFileResult = await innerFetch(url);
 
-            const content = await ghFileResult.text();
+          const content = await ghFileResult.text();
 
-            const versionList = convertMarkdownToVersionList(content);
-            if (versionList.length === 0) {
-              throw new EmptyMarkdownFile('Empty file');
-            }
+          const versionList = convertMarkdownToVersionList(content);
+          if (versionList.length === 0) {
+            throw new EmptyMarkdownFile('Empty file');
+          }
 
-            resolve({ content, type: 'markdown' });
-            break;
+          return { content, type: 'markdown' };
+          break;
 
-          case 'github-releases':
-            resolve({
-              content: await githubReleasesFetch(packageName, gtThanVersion),
-              type: 'github-release',
-            });
-            break;
+        case 'github-releases':
+          return {
+            content: await githubReleasesFetch(packageName, gtThanVersion),
+            type: 'github-release',
+          };
+          break;
 
-          default:
-            const msg = `Unable to determine file type to test: "${fileToTest.type}"`;
-            throw new Error(msg);
-            break;
-        }
-      } catch (e) {
-        if (e instanceof FileNotFound || e instanceof EmptyMarkdownFile) {
-          continue;
-        }
-
-        console.error(e);
-        throw e;
+        default:
+          const msg = `Unable to determine file type to test: "${fileToTest.type}"`;
+          throw new Error(msg);
+          break;
       }
-    }
+    } catch (e) {
+      if (e instanceof FileNotFound || e instanceof EmptyMarkdownFile) {
+        continue;
+      }
 
-    reject(new NoChangelogFoundError('No file found', TEST_PROCESSES));
-  });
+      throw e;
+    }
+  }
+
+  throw new NoChangelogFoundError('No file found', TEST_PROCESSES);
 }
 
 export function getVersionListForPackage(packageName, gtThanVersion) {

@@ -13,19 +13,23 @@
     "babel-core": "^6.26.0",
     "babel-plugin-external-helpers": "^6.22.0",
     "babel-plugin-transform-builtin-extend": "^1.1.2",
+    "babel-plugin-transform-react-jsx": "^6.24.1",
     "babel-polyfill": "^6.26.0",
     "babel-preset-env": "^1.6.0",
     "find-versions": "^2.0.0",
     "github": "^9.2.0",
+    "ink": "^0.4.1",
+    "ink-spinner": "^1.0.0",
+    "ink-tab": "^1.0.0",
     "jest": "^20.0.4",
     "lint-staged": "^4.2.0",
     "marked": "^0.3.6",
     "marked-terminal": "^2.0.0",
     "marked-to-md": "^1.0.1",
     "minimist": "^1.2.0",
-    "nock": "^9.0.14",
+    "nock": "^9.1.6",
     "node-fetch": "^1.7.3",
-    "prettier": "^1.6.1",
+    "prettier": "^1.10.0",
     "rollup": "^0.49.3",
     "rollup-plugin-babel": "^3.0.2",
     "rollup-plugin-commonjs": "^8.2.1",
@@ -35,9 +39,11 @@
   },
   "scripts": {
     "test": "jest",
-    "build": "rollup -c && chmod a+x bin/changelog-view && (git commit -m 'build binary' bin/changelog-view || true)",
+    "build":
+      "rollup -c && chmod a+x bin/changelog-view && (git commit -m 'build binary' bin/changelog-view || true)",
     "prepublishOnly": "npm run build",
-    "precommit": "lint-staged"
+    "precommit": "lint-staged",
+    "postinstall": "prettier --write package.json"
   },
   "jest": {
     "transform": {
@@ -46,9 +52,6 @@
     }
   },
   "lint-staged": {
-    "*.{js,jsx,json}": [
-      "prettier --write",
-      "git add"
-    ]
+    "*.{js,jsx,json}": ["prettier --write", "git add"]
   }
 }
