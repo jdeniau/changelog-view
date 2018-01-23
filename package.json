@@ -1,6 +1,6 @@
 {
   "name": "changelog-view",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "Tool to view changelog of package in console",
   "bin": {
     "changelog-view": "bin/changelog-view"
