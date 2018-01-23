@@ -1,53 +1,146 @@
+import { h, render, Component, Text } from 'ink';
+import { Tabs, Tab } from 'ink-tab';
+import Spinner from 'ink-spinner';
 import marked from 'marked';
 import TerminalRenderer from 'marked-terminal';
 import { getVersionListForPackage } from './file';
 import getPackageInfo from './packageInfo';
 
+function terminalMarked(content) {
+  return marked(content, {
+    renderer: new TerminalRenderer(),
+  });
+}
+
 function changelogView(packageString) {
   const packageInfo = getPackageInfo(packageString);
 
   if (!packageInfo) {
-    console.error(`package "${packageString}" version is not well formatted`);
-    process.exit(1);
+    return new Promise((resolve, reject) => {
+      reject({
+        message: terminalMarked(
+          ` > *package "${packageString}" version is not well formatted*`
+        ),
+        type: 'error',
+      });
+    });
   }
 
   const { packageName, version } = packageInfo;
 
-  getVersionListForPackage(packageName, version)
+  return getVersionListForPackage(packageName, version)
     .then(versionList => {
-      console.log(
-        marked(
-          `# CHANGELOG for "${packageName}" (current version: \`${version}\`)`,
-          {
-            renderer: new TerminalRenderer(),
-          }
-        )
+      let message = terminalMarked(
+        `# CHANGELOG for "${packageName}" (current version: \`${version}\`)`
       );
+
       if (versionList.length > 0) {
         versionList.forEach(c => {
-          console.log(marked(c.content, { renderer: new TerminalRenderer() }));
+          message = message + terminalMarked(c.content);
         });
       } else {
-        console.log(
-          marked(` > *No changes found for "${packageName}"*`, {
-            renderer: new TerminalRenderer(),
-          })
-        );
+        message =
+          message +
+          terminalMarked(` > *No changes found for "${packageName}"*`);
       }
+
+      return {
+        message,
+        type: 'success',
+      };
     })
-    .catch(e => {
-      console.error(e);
-      console.error(
-        `${e.message}\nTested files: ${e.testedProcess.map(
-          f => `\n  * [${f.type}] ${f.fileName}`
-        )}`
-      );
-      process.exit(1);
+    .catch(error => {
+      const message = `${e.message}\nTested files: ${e.testedProcess.map(
+        f => `\n  * [${f.type}] ${f.fileName}`
+      )}`;
+      return {
+        type: 'error',
+        message,
+        error,
+      };
     });
 }
 
-export default function packageListChangeLog(packageStringList) {
-  packageStringList.forEach(packageString => {
-    changelogView(packageString);
+const changelogViewCache = {};
+
+function cachedChangelogView(packageString) {
+  return new Promise((resolve, reject) => {
+    if (!changelogViewCache[packageString]) {
+      changelogView(packageString)
+        .then(result => {
+          changelogViewCache[packageString] = result;
+          resolve(changelogViewCache[packageString]);
+        })
+        .catch(result => {
+          changelogViewCache[packageString] = result;
+          reject(changelogViewCache[packageString]);
+        });
+    } else {
+      if (changelogViewCache[packageString].type === 'success') {
+        resolve(changelogViewCache[packageString]);
+      } else {
+        reject(changelogViewCache[packageString]);
+      }
+    }
   });
+}
+
+class PackageListChangelog extends Component {
+  constructor(props) {
+    super(props);
+
+    this.handleTabChange = this.handleTabChange.bind(this);
+
+    this.state = {
+      activeTabName: null,
+      changelogViewResult: null,
+    };
+  }
+
+  handleTabChange(name, activeTab) {
+    this.setState({
+      activeTabName: name,
+      changelogViewResult: null,
+    });
+
+    cachedChangelogView(name)
+      .then(result => {
+        this.setState({
+          changelogViewResult: result,
+        });
+      })
+      .catch(result => {
+        this.setState({
+          changelogViewResult: result,
+        });
+      });
+  }
+
+  render() {
+    const { packageStringList } = this.props;
+
+    return (
+      <div>
+        <div>
+          {this.state.changelogViewResult ? (
+            <Text>{this.state.changelogViewResult.message}</Text>
+          ) : (
+            <Text>
+              <Spinner orange /> Loading
+            </Text>
+          )}
+        </div>
+
+        <Tabs onChange={this.handleTabChange}>
+          {packageStringList.map(packageString => (
+            <Tab name={packageString}>{packageString}</Tab>
+          ))}
+        </Tabs>
+      </div>
+    );
+  }
+}
+
+export default function packageListChangeLog(packageStringList) {
+  render(<PackageListChangelog packageStringList={packageStringList} />);
 }
