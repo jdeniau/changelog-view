@@ -1,4 +1,4 @@
-Changelog view
+Changelog view [![Build Status](https://travis-ci.org/jdeniau/changelog-view.svg?branch=master)](https://travis-ci.org/jdeniau/changelog-view)
 ===================
 
 Tool view changelog in console. 
@@ -8,27 +8,24 @@ You can see it as a `git diff` between version for changelogs.
 
 ![demo](demo.gif)
 
-## Installation
-If you use have `npm>=5.2` installed, you can run changelog-view without installing it. See usage.
+## Usage
+With npx (require `npm >= 5.2`):
+```sh
+npx changelog-view <package@currentVersion> [<package@currentVersion> ...]
+```
 
-If you prefer installing it, you can install it with npm/yarn :
+Example
+```sh
+npx changelog-view howardabrams/node-mocks-http@1.5.4 mapado/rest-client-js-sdk@2.0.0
+```
+
+If you don't have `npm >= 5.2` or if you prefer installing the package, you can install it with npm/yarn :
 ```sh
 yarn install --dev changelog-view # yarn
 # or
 npm install (-g) changelog-view # npm
 ```
-
-## Usage
-np: 
-```sh
-npx changelog-view <package@currentVersion> [<package@currentVersion> ...]
-```
-yarn / npm: the binary is in `node_modules/.bin/changelog-view`
-
-Example
-```sh
-npx changelog-view howardabrams/node-mocks-http@1.5.4 mapado/rest-client-js-sdk@0.14.1
-```
+And then the binary will be located in `node_modules/.bin/changelog-view`
 
 ### In a JavaScript / PHP project ?
 `changelog-view` tries to detect automatically the current version of your currently installed dependencies.
