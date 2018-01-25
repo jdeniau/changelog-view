@@ -25,7 +25,9 @@ function commonjsRequire () {
 	throw new Error('Dynamic requires are not currently supported by rollup-plugin-commonjs');
 }
 
-
+function unwrapExports (x) {
+	return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
+}
 
 function createCommonjsModule(fn, module) {
 	return module = { exports: {} }, fn(module, module.exports), module.exports;
@@ -59,7 +61,7 @@ var _descriptors = !_fails(function () {
 });
 
 var _core = createCommonjsModule(function (module) {
-var core = module.exports = { version: '2.5.1' };
+var core = module.exports = { version: '2.5.3' };
 if (typeof __e == 'number') __e = core; // eslint-disable-line no-undef
 });
 
@@ -602,6 +604,7 @@ var META = _meta.KEY;
 
 
 
+
 var gOPD = _objectGopd.f;
 var dP = _objectDp.f;
 var gOPN = _objectGopnExt.f;
@@ -786,15 +789,14 @@ $JSON && _export(_export.S + _export.F * (!USE_NATIVE || _fails(function () {
   return _stringify([S]) != '[null]' || _stringify({ a: S }) != '{}' || _stringify(Object(S)) != '{}';
 })), 'JSON', {
   stringify: function stringify(it) {
-    if (it === undefined || isSymbol(it)) return; // IE8 returns string on undefined
     var args = [it];
     var i = 1;
     var replacer, $replacer;
     while (arguments.length > i) args.push(arguments[i++]);
-    replacer = args[1];
-    if (typeof replacer == 'function') $replacer = replacer;
-    if ($replacer || !_isArray(replacer)) replacer = function (key, value) {
-      if ($replacer) value = $replacer.call(this, key, value);
+    $replacer = replacer = args[1];
+    if (!_isObject(replacer) && it === undefined || isSymbol(it)) return; // IE8 returns string on undefined
+    if (!_isArray(replacer)) replacer = function (key, value) {
+      if (typeof $replacer == 'function') value = $replacer.call(this, key, value);
       if (!isSymbol(value)) return value;
     };
     args[1] = replacer;
@@ -1833,7 +1835,7 @@ var _iterDefine = function (Base, NAME, Constructor, next, DEFAULT, IS_SET, FORC
   var VALUES_BUG = false;
   var proto = Base.prototype;
   var $native = proto[ITERATOR] || proto[FF_ITERATOR] || DEFAULT && proto[DEFAULT];
-  var $default = $native || getMethod(DEFAULT);
+  var $default = (!BUGGY && $native) || getMethod(DEFAULT);
   var $entries = DEFAULT ? !DEF_VALUES ? $default : getMethod('entries') : undefined;
   var $anyNative = NAME == 'Array' ? proto.entries || $native : $native;
   var methods, key, IteratorPrototype;
@@ -2364,7 +2366,7 @@ _export(_export.P + _export.F * _fails(function () {
     var start = _toAbsoluteIndex(begin, len);
     var upTo = _toAbsoluteIndex(end, len);
     var size = _toLength(upTo - start);
-    var cloned = Array(size);
+    var cloned = new Array(size);
     var i = 0;
     for (; i < size; i++) cloned[i] = klass == 'String'
       ? this.charAt(start + i)
@@ -3130,8 +3132,8 @@ var _microtask = function () {
     notify = function () {
       process$4.nextTick(flush);
     };
-  // browsers with MutationObserver
-  } else if (Observer) {
+  // browsers with MutationObserver, except iOS Safari - https://github.com/zloirock/core-js/issues/339
+  } else if (Observer && !(_global.navigator && _global.navigator.standalone)) {
     var toggle = true;
     var node = document.createTextNode('');
     new Observer(flush).observe(node, { characterData: true }); // eslint-disable-line no-new
@@ -3321,14 +3323,7 @@ var onUnhandled = function (promise) {
   });
 };
 var isUnhandled = function (promise) {
-  if (promise._h == 1) return false;
-  var chain = promise._a || promise._c;
-  var i = 0;
-  var reaction;
-  while (chain.length > i) {
-    reaction = chain[i++];
-    if (reaction.fail || !isUnhandled(reaction.promise)) return false;
-  } return true;
+  return promise._h !== 1 && (promise._a || promise._c).length === 0;
 };
 var onHandleUnhandled = function (promise) {
   task.call(_global, function () {
@@ -4010,7 +4005,7 @@ var $OFFSET = _descriptors ? '_o' : BYTE_OFFSET;
 
 // IEEE754 conversions based on https://github.com/feross/ieee754
 function packIEEE754(value, mLen, nBytes) {
-  var buffer = Array(nBytes);
+  var buffer = new Array(nBytes);
   var eLen = nBytes * 8 - mLen - 1;
   var eMax = (1 << eLen) - 1;
   var eBias = eMax >> 1;
@@ -4128,7 +4123,7 @@ if (!_typed.ABV) {
   $ArrayBuffer = function ArrayBuffer(length) {
     _anInstance(this, $ArrayBuffer, ARRAY_BUFFER);
     var byteLength = _toIndex(length);
-    this._b = _arrayFill.call(Array(byteLength), 0);
+    this._b = _arrayFill.call(new Array(byteLength), 0);
     this[$LENGTH] = byteLength;
   };
 
@@ -5234,12 +5229,18 @@ var _stringPad = function (that, maxLength, fillString, left) {
   return left ? stringFiller + S : S + stringFiller;
 };
 
+var navigator = _global.navigator;
+
+var _userAgent = navigator && navigator.userAgent || '';
+
 'use strict';
 // https://github.com/tc39/proposal-string-pad-start-end
 
 
 
-_export(_export.P, 'String', {
+
+// https://github.com/zloirock/core-js/issues/280
+_export(_export.P + _export.F * /Version\/10\.\d+(\.\d+)? Safari\//.test(_userAgent), 'String', {
   padStart: function padStart(maxLength /* , fillString = ' ' */) {
     return _stringPad(this, maxLength, arguments.length > 1 ? arguments[1] : undefined, true);
   }
@@ -5250,7 +5251,9 @@ _export(_export.P, 'String', {
 
 
 
-_export(_export.P, 'String', {
+
+// https://github.com/zloirock/core-js/issues/280
+_export(_export.P + _export.F * /Version\/10\.\d+(\.\d+)? Safari\//.test(_userAgent), 'String', {
   padEnd: function padEnd(maxLength /* , fillString = ' ' */) {
     return _stringPad(this, maxLength, arguments.length > 1 ? arguments[1] : undefined, false);
   }
@@ -5472,7 +5475,7 @@ _export(_export.P + _export.R, 'Set', { toJSON: _collectionToJson('Set') });
 var _setCollectionOf = function (COLLECTION) {
   _export(_export.S, COLLECTION, { of: function of() {
     var length = arguments.length;
-    var A = Array(length);
+    var A = new Array(length);
     while (length--) A[length] = arguments[length];
     return new this(A);
   } });
@@ -6067,7 +6070,7 @@ _redefineAll($Observable, {
     });
   },
   of: function of() {
-    for (var i = 0, l = arguments.length, items = Array(l); i < l;) items[i] = arguments[i++];
+    for (var i = 0, l = arguments.length, items = new Array(l); i < l;) items[i] = arguments[i++];
     return new (typeof this === 'function' ? this : $Observable)(function (observer) {
       var done = false;
       microtask$2(function () {
@@ -6092,9 +6095,9 @@ _setSpecies('Observable');
 // ie9- setTimeout & setInterval additional parameters fix
 
 
-var navigator = _global.navigator;
+
 var slice = [].slice;
-var MSIE = !!navigator && /MSIE .\./.test(navigator.userAgent); // <- dirty ie9- check
+var MSIE = /MSIE .\./.test(_userAgent); // <- dirty ie9- check
 var wrap$1 = function (set) {
   return function (fn, time /* , ...args */) {
     var boundArgs = arguments.length > 2;
@@ -7191,12 +7194,12 @@ const x = module.exports;
 const ESC = '\u001B[';
 const isTerminalApp = process.env.TERM_PROGRAM === 'Apple_Terminal';
 
-x.cursorTo = function (x, y) {
-	if (arguments.length === 0) {
-		return ESC + 'H';
+x.cursorTo = (x, y) => {
+	if (typeof x !== 'number') {
+		throw new TypeError('The `x` argument is required');
 	}
 
-	if (arguments.length === 1) {
+	if (typeof y !== 'number') {
 		return ESC + (x + 1) + 'G';
 	}
 
@@ -7204,6 +7207,10 @@ x.cursorTo = function (x, y) {
 };
 
 x.cursorMove = (x, y) => {
+	if (typeof x !== 'number') {
+		throw new TypeError('The `x` argument is required');
+	}
+
 	let ret = '';
 
 	if (x < 0) {
@@ -7914,13 +7921,40 @@ var logUpdate = createCommonjsModule(function (module) {
 
 
 
-const main = stream => {
+const getWidth = stream => {
+	const columns = stream.columns;
+
+	if (!columns) {
+		return 80;
+	}
+
+	// Windows appears to wrap a character early
+	// I hate Windows so much
+	if (process.platform === 'win32') {
+		return columns - 1;
+	}
+
+	return columns;
+};
+
+const main = (stream, options) => {
+	options = Object.assign({
+		showCursor: false
+	}, options);
+
 	let prevLineCount = 0;
 
 	const render = function () {
-		cliCursor.hide();
+		if (!options.showCursor) {
+			cliCursor.hide();
+		}
+
 		let out = [].join.call(arguments, ' ') + '\n';
-		out = wrapAnsi_1(out, process.stdout.columns || 80, {wordWrap: false, trim: false, hard: true});
+		out = wrapAnsi_1(out, getWidth(stream), {
+			trim: false,
+			hard: true,
+			wordWrap: false
+		});
 		stream.write(ansiEscapes.eraseLines(prevLineCount) + out);
 		prevLineCount = out.split('\n').length;
 	};
@@ -7932,7 +7966,10 @@ const main = stream => {
 
 	render.done = () => {
 		prevLineCount = 0;
-		cliCursor.show();
+
+		if (!options.showCursor) {
+			cliCursor.show();
+		}
 	};
 
 	return render;
@@ -7947,11 +7984,9 @@ module.exports.create = main;
 
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
- * All rights reserved.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  * 
  */
@@ -7984,11 +8019,9 @@ var emptyFunction_1 = emptyFunction;
 
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
- * All rights reserved.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -8039,12 +8072,10 @@ function invariant(condition, format, a, b, c, d, e, f) {
 var invariant_1 = invariant;
 
 /**
- * Copyright 2014-2015, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2014-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -8103,13 +8134,102 @@ if (process.env.NODE_ENV !== 'production') {
 
 var warning_1 = warning;
 
+/*
+object-assign
+(c) Sindre Sorhus
+@license MIT
+*/
+
+'use strict';
+/* eslint-disable no-unused-vars */
+var getOwnPropertySymbols = Object.getOwnPropertySymbols;
+var hasOwnProperty$1 = Object.prototype.hasOwnProperty;
+var propIsEnumerable = Object.prototype.propertyIsEnumerable;
+
+function toObject$1(val) {
+	if (val === null || val === undefined) {
+		throw new TypeError('Object.assign cannot be called with null or undefined');
+	}
+
+	return Object(val);
+}
+
+function shouldUseNative() {
+	try {
+		if (!Object.assign) {
+			return false;
+		}
+
+		// Detect buggy property enumeration order in older V8 versions.
+
+		// https://bugs.chromium.org/p/v8/issues/detail?id=4118
+		var test1 = new String('abc');  // eslint-disable-line no-new-wrappers
+		test1[5] = 'de';
+		if (Object.getOwnPropertyNames(test1)[0] === '5') {
+			return false;
+		}
+
+		// https://bugs.chromium.org/p/v8/issues/detail?id=3056
+		var test2 = {};
+		for (var i = 0; i < 10; i++) {
+			test2['_' + String.fromCharCode(i)] = i;
+		}
+		var order2 = Object.getOwnPropertyNames(test2).map(function (n) {
+			return test2[n];
+		});
+		if (order2.join('') !== '0123456789') {
+			return false;
+		}
+
+		// https://bugs.chromium.org/p/v8/issues/detail?id=3056
+		var test3 = {};
+		'abcdefghijklmnopqrst'.split('').forEach(function (letter) {
+			test3[letter] = letter;
+		});
+		if (Object.keys(Object.assign({}, test3)).join('') !==
+				'abcdefghijklmnopqrst') {
+			return false;
+		}
+
+		return true;
+	} catch (err) {
+		// We don't expect any of the above to throw, but better to be safe.
+		return false;
+	}
+}
+
+var objectAssign = shouldUseNative() ? Object.assign : function (target, source) {
+	var from;
+	var to = toObject$1(target);
+	var symbols;
+
+	for (var s = 1; s < arguments.length; s++) {
+		from = Object(arguments[s]);
+
+		for (var key in from) {
+			if (hasOwnProperty$1.call(from, key)) {
+				to[key] = from[key];
+			}
+		}
+
+		if (getOwnPropertySymbols) {
+			symbols = getOwnPropertySymbols(from);
+			for (var i = 0; i < symbols.length; i++) {
+				if (propIsEnumerable.call(from, symbols[i])) {
+					to[symbols[i]] = from[symbols[i]];
+				}
+			}
+		}
+	}
+
+	return to;
+};
+
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  */
 
 'use strict';
@@ -8119,12 +8239,10 @@ var ReactPropTypesSecret = 'SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED';
 var ReactPropTypesSecret_1 = ReactPropTypesSecret;
 
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  */
 
 'use strict';
@@ -8158,7 +8276,7 @@ function checkPropTypes(typeSpecs, values, location, componentName, getStack) {
         try {
           // This is intentionally an invariant that gets caught. It's the same
           // behavior as without this statement except with a better message.
-          invariant$1(typeof typeSpecs[typeSpecName] === 'function', '%s: %s type `%s` is invalid; it must be a function, usually from ' + 'React.PropTypes.', componentName || 'React class', location, typeSpecName);
+          invariant$1(typeof typeSpecs[typeSpecName] === 'function', '%s: %s type `%s` is invalid; it must be a function, usually from ' + 'the `prop-types` package, but received `%s`.', componentName || 'React class', location, typeSpecName, typeof typeSpecs[typeSpecName]);
           error = typeSpecs[typeSpecName](values, typeSpecName, componentName, location, null, ReactPropTypesSecret$1);
         } catch (ex) {
           error = ex;
@@ -8181,15 +8299,14 @@ function checkPropTypes(typeSpecs, values, location, componentName, getStack) {
 var checkPropTypes_1 = checkPropTypes;
 
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  */
 
 'use strict';
+
 
 
 
@@ -8292,7 +8409,8 @@ var factoryWithTypeCheckers = function(isValidElement, throwOnDirectAccess) {
     objectOf: createObjectOfTypeChecker,
     oneOf: createEnumTypeChecker,
     oneOfType: createUnionTypeChecker,
-    shape: createShapeTypeChecker
+    shape: createShapeTypeChecker,
+    exact: createStrictShapeTypeChecker,
   };
 
   /**
@@ -8507,7 +8625,7 @@ var factoryWithTypeCheckers = function(isValidElement, throwOnDirectAccess) {
       if (typeof checker !== 'function') {
         warning_1(
           false,
-          'Invalid argument supplid to oneOfType. Expected an array of check functions, but ' +
+          'Invalid argument supplied to oneOfType. Expected an array of check functions, but ' +
           'received %s at index %s.',
           getPostfixForTypeWarning(checker),
           i
@@ -8558,6 +8676,36 @@ var factoryWithTypeCheckers = function(isValidElement, throwOnDirectAccess) {
       }
       return null;
     }
+    return createChainableTypeChecker(validate);
+  }
+
+  function createStrictShapeTypeChecker(shapeTypes) {
+    function validate(props, propName, componentName, location, propFullName) {
+      var propValue = props[propName];
+      var propType = getPropType(propValue);
+      if (propType !== 'object') {
+        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type `' + propType + '` ' + ('supplied to `' + componentName + '`, expected `object`.'));
+      }
+      // We need to check all keys in case some are required but missing from
+      // props.
+      var allKeys = objectAssign({}, props[propName], shapeTypes);
+      for (var key in allKeys) {
+        var checker = shapeTypes[key];
+        if (!checker) {
+          return new PropTypeError(
+            'Invalid ' + location + ' `' + propFullName + '` key `' + key + '` supplied to `' + componentName + '`.' +
+            '\nBad object: ' + JSON.stringify(props[propName], null, '  ') +
+            '\nValid keys: ' +  JSON.stringify(Object.keys(shapeTypes), null, '  ')
+          );
+        }
+        var error = checker(propValue, key, componentName, location, propFullName + '.' + key, ReactPropTypesSecret_1);
+        if (error) {
+          return error;
+        }
+      }
+      return null;
+    }
+
     return createChainableTypeChecker(validate);
   }
 
@@ -8694,12 +8842,10 @@ var factoryWithTypeCheckers = function(isValidElement, throwOnDirectAccess) {
 };
 
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  */
 
 'use strict';
@@ -8744,7 +8890,8 @@ var factoryWithThrowingShims = function() {
     objectOf: getShim,
     oneOf: getShim,
     oneOfType: getShim,
-    shape: getShim
+    shape: getShim,
+    exact: getShim
   };
 
   ReactPropTypes.checkPropTypes = emptyFunction_1;
@@ -8755,12 +8902,10 @@ var factoryWithThrowingShims = function() {
 
 var propTypes = createCommonjsModule(function (module) {
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  */
 
 if (process.env.NODE_ENV !== 'production') {
@@ -9035,7 +9180,7 @@ function arrayPush(array, values) {
 var objectProto = Object.prototype;
 
 /** Used to check objects for own properties. */
-var hasOwnProperty$1 = objectProto.hasOwnProperty;
+var hasOwnProperty$2 = objectProto.hasOwnProperty;
 
 /**
  * Used to resolve the
@@ -9134,7 +9279,7 @@ function flattenDeep(array) {
  */
 function isArguments(value) {
   // Safari 8.1 makes `arguments.callee` enumerable in strict mode.
-  return isArrayLikeObject(value) && hasOwnProperty$1.call(value, 'callee') &&
+  return isArrayLikeObject(value) && hasOwnProperty$2.call(value, 'callee') &&
     (!propertyIsEnumerable.call(value, 'callee') || objectToString.call(value) == argsTag);
 }
 
@@ -10768,14 +10913,13 @@ convert.rgb.gray = function (rgb) {
 	conversions that are not possible simply are not included.
 */
 
-// https://jsperf.com/object-keys-vs-for-in-with-closure/3
-var models$1 = Object.keys(conversions);
-
 function buildGraph() {
 	var graph = {};
+	// https://jsperf.com/object-keys-vs-for-in-with-closure/3
+	var models = Object.keys(conversions);
 
-	for (var len = models$1.length, i = 0; i < len; i++) {
-		graph[models$1[i]] = {
+	for (var len = models.length, i = 0; i < len; i++) {
+		graph[models[i]] = {
 			// http://jsperf.com/1-vs-infinity
 			// micro-opt, but this is simple.
 			distance: -1,
@@ -11191,7 +11335,7 @@ let supportLevel = (() => {
 		return 2;
 	}
 
-	if (/^screen|^xterm|^vt100|color|ansi|cygwin|linux/i.test(env.TERM)) {
+	if (/^screen|^xterm|^vt100|^rxvt|color|ansi|cygwin|linux/i.test(env.TERM)) {
 		return 1;
 	}
 
@@ -11215,30 +11359,30 @@ module.exports = process && support(supportLevel);
 
 var templates = createCommonjsModule(function (module) {
 'use strict';
-const TEMPLATE_REGEX = /(?:\\(u[a-f0-9]{4}|x[a-f0-9]{2}|.))|(?:\{(~)?(\w+(?:\([^)]*\))?(?:\.\w+(?:\([^)]*\))?)*)(?:[ \t]|(?=\r?\n)))|(\})|((?:.|[\r\n\f])+?)/gi;
+const TEMPLATE_REGEX = /(?:\\(u[a-f\d]{4}|x[a-f\d]{2}|.))|(?:\{(~)?(\w+(?:\([^)]*\))?(?:\.\w+(?:\([^)]*\))?)*)(?:[ \t]|(?=\r?\n)))|(\})|((?:.|[\r\n\f])+?)/gi;
 const STYLE_REGEX = /(?:^|\.)(\w+)(?:\(([^)]*)\))?/g;
 const STRING_REGEX = /^(['"])((?:\\.|(?!\1)[^\\])*)\1$/;
-const ESCAPE_REGEX = /\\(u[0-9a-f]{4}|x[0-9a-f]{2}|.)|([^\\])/gi;
+const ESCAPE_REGEX = /\\(u[a-f\d]{4}|x[a-f\d]{2}|.)|([^\\])/gi;
 
-const ESCAPES = {
-	n: '\n',
-	r: '\r',
-	t: '\t',
-	b: '\b',
-	f: '\f',
-	v: '\v',
-	0: '\0',
-	'\\': '\\',
-	e: '\u001b',
-	a: '\u0007'
-};
+const ESCAPES = new Map([
+	['n', '\n'],
+	['r', '\r'],
+	['t', '\t'],
+	['b', '\b'],
+	['f', '\f'],
+	['v', '\v'],
+	['0', '\0'],
+	['\\', '\\'],
+	['e', '\u001B'],
+	['a', '\u0007']
+]);
 
 function unescape(c) {
 	if ((c[0] === 'u' && c.length === 5) || (c[0] === 'x' && c.length === 3)) {
 		return String.fromCharCode(parseInt(c.slice(1), 16));
 	}
 
-	return ESCAPES[c] || c;
+	return ESCAPES.get(c) || c;
 }
 
 function parseArguments(name, args) {
@@ -11344,6 +11488,7 @@ module.exports = (chalk, tmp) => {
 };
 });
 
+var chalk = createCommonjsModule(function (module) {
 'use strict';
 
 
@@ -11404,10 +11549,16 @@ for (const key of Object.keys(ansiStyles)) {
 	styles[key] = {
 		get() {
 			const codes = ansiStyles[key];
-			return build.call(this, this._styles ? this._styles.concat(codes) : [codes], key);
+			return build.call(this, this._styles ? this._styles.concat(codes) : [codes], this._empty, key);
 		}
 	};
 }
+
+styles.visible = {
+	get() {
+		return build.call(this, this._styles || [], true, 'visible');
+	}
+};
 
 ansiStyles.color.closeRe = new RegExp(escapeStringRegexp(ansiStyles.color.close), 'g');
 for (const model of Object.keys(ansiStyles.color.ansi)) {
@@ -11425,7 +11576,7 @@ for (const model of Object.keys(ansiStyles.color.ansi)) {
 					close: ansiStyles.color.close,
 					closeRe: ansiStyles.color.closeRe
 				};
-				return build.call(this, this._styles ? this._styles.concat(codes) : [codes], model);
+				return build.call(this, this._styles ? this._styles.concat(codes) : [codes], this._empty, model);
 			};
 		}
 	};
@@ -11448,20 +11599,21 @@ for (const model of Object.keys(ansiStyles.bgColor.ansi)) {
 					close: ansiStyles.bgColor.close,
 					closeRe: ansiStyles.bgColor.closeRe
 				};
-				return build.call(this, this._styles ? this._styles.concat(codes) : [codes], model);
+				return build.call(this, this._styles ? this._styles.concat(codes) : [codes], this._empty, model);
 			};
 		}
 	};
 }
 
-const proto$4 = Object.defineProperties(() => {}, styles);
+const proto = Object.defineProperties(() => {}, styles);
 
-function build(_styles, key) {
+function build(_styles, _empty, key) {
 	const builder = function () {
 		return applyStyle.apply(builder, arguments);
 	};
 
 	builder._styles = _styles;
+	builder._empty = _empty;
 
 	const self = this;
 
@@ -11490,7 +11642,7 @@ function build(_styles, key) {
 
 	// `__proto__` is used because we must return a function, but there is
 	// no way to create a function with a different prototype
-	builder.__proto__ = proto$4; // eslint-disable-line no-proto
+	builder.__proto__ = proto; // eslint-disable-line no-proto
 
 	return builder;
 }
@@ -11513,7 +11665,7 @@ function applyStyle() {
 	}
 
 	if (!this.enabled || this.level <= 0 || !str) {
-		return str;
+		return this._empty ? '' : str;
 	}
 
 	// Turns out that on Windows dimmed gray text becomes invisible in cmd.exe,
@@ -11562,10 +11714,10 @@ function chalkTag(chalk, strings) {
 
 Object.defineProperties(Chalk.prototype, styles);
 
-var chalk = Chalk(); // eslint-disable-line new-cap
-var supportsColor_1 = supportsColor;
-
-chalk.supportsColor = supportsColor_1;
+module.exports = Chalk(); // eslint-disable-line new-cap
+module.exports.supportsColor = supportsColor;
+module.exports.default = module.exports; // For TypeScript
+});
 
 'use strict';
 
@@ -11830,6 +11982,7 @@ exports.Tab = Tab;
 exports.Tabs = Tabs;
 });
 
+unwrapExports(dist);
 var dist_1 = dist.Tabs;
 var dist_2 = dist.Tab;
 
@@ -12209,6 +12362,7 @@ var marked = createCommonjsModule(function (module, exports) {
  */
 
 (function() {
+'use strict';
 
 /**
  * Block-Level Grammar
@@ -12653,21 +12807,21 @@ Lexer.prototype.token = function(src, top, bq) {
 
 var inline = {
   escape: /^\\([\\`*{}\[\]()#+\-.!_>])/,
-  autolink: /^<([^ >]+(@|:\/)[^ >]+)>/,
+  autolink: /^<([^ <>]+(@|:\/)[^ <>]+)>/,
   url: noop,
-  tag: /^<!--[\s\S]*?-->|^<\/?\w+(?:"[^"]*"|'[^']*'|[^'">])*?>/,
+  tag: /^<!--[\s\S]*?-->|^<\/?\w+(?:"[^"]*"|'[^']*'|[^<'">])*?>/,
   link: /^!?\[(inside)\]\(href\)/,
   reflink: /^!?\[(inside)\]\s*\[([^\]]*)\]/,
   nolink: /^!?\[((?:\[[^\]]*\]|[^\[\]])*)\]/,
   strong: /^__([\s\S]+?)__(?!_)|^\*\*([\s\S]+?)\*\*(?!\*)/,
   em: /^\b_((?:[^_]|__)+?)_\b|^\*((?:\*\*|[\s\S])+?)\*(?!\*)/,
-  code: /^(`+)\s*([\s\S]*?[^`])\s*\1(?!`)/,
+  code: /^(`+)([\s\S]*?[^`])\1(?!`)/,
   br: /^ {2,}\n(?!\s*$)/,
   del: noop,
   text: /^[\s\S]+?(?=[\\<!\[_*`]| {2,}\n|$)/
 };
 
-inline._inside = /(?:\[[^\]]*\]|[^\[\]]|\](?=[^\[]*\]))*/;
+inline._inside = /(?:\[[^\]]*\]|\\[\[\]]|[^\[\]]|\](?=[^\[]*\]))*/;
 inline._href = /\s*<?([\s\S]*?)>?(?:\s+['"]([\s\S]*?)['"])?\s*/;
 
 inline.link = replace(inline.link)
@@ -12782,9 +12936,11 @@ InlineLexer.prototype.output = function(src) {
     if (cap = this.rules.autolink.exec(src)) {
       src = src.substring(cap[0].length);
       if (cap[2] === '@') {
-        text = cap[1].charAt(6) === ':'
+        text = escape(
+          cap[1].charAt(6) === ':'
           ? this.mangle(cap[1].substring(7))
-          : this.mangle(cap[1]);
+          : this.mangle(cap[1])
+        );
         href = this.mangle('mailto:') + text;
       } else {
         text = escape(cap[1]);
@@ -12865,7 +13021,7 @@ InlineLexer.prototype.output = function(src) {
     // code
     if (cap = this.rules.code.exec(src)) {
       src = src.substring(cap[0].length);
-      out += this.renderer.codespan(escape(cap[2], true));
+      out += this.renderer.codespan(escape(cap[2].trim(), true));
       continue;
     }
 
@@ -13077,11 +13233,14 @@ Renderer.prototype.link = function(href, title, text) {
         .replace(/[^\w:]/g, '')
         .toLowerCase();
     } catch (e) {
-      return '';
+      return text;
     }
-    if (prot.indexOf('javascript:') === 0 || prot.indexOf('vbscript:') === 0) {
-      return '';
+    if (prot.indexOf('javascript:') === 0 || prot.indexOf('vbscript:') === 0 || prot.indexOf('data:') === 0) {
+      return text;
     }
+  }
+  if (this.options.baseUrl && !originIndependentUrl.test(href)) {
+    href = resolveUrl(this.options.baseUrl, href);
   }
   var out = '<a href="' + href + '"';
   if (title) {
@@ -13092,6 +13251,9 @@ Renderer.prototype.link = function(href, title, text) {
 };
 
 Renderer.prototype.image = function(href, title, text) {
+  if (this.options.baseUrl && !originIndependentUrl.test(href)) {
+    href = resolveUrl(this.options.baseUrl, href);
+  }
   var out = '<img src="' + href + '" alt="' + text + '"';
   if (title) {
     out += ' title="' + title + '"';
@@ -13297,8 +13459,8 @@ function escape(html, encode) {
 }
 
 function unescape(html) {
-	// explicitly match decimal, hex, and named HTML entities 
-  return html.replace(/&(#(?:\d+)|(?:#x[0-9A-Fa-f]+)|(?:\w+));?/g, function(_, n) {
+	// explicitly match decimal, hex, and named HTML entities
+  return html.replace(/&(#(?:\d+)|(?:#x[0-9A-Fa-f]+)|(?:\w+));?/ig, function(_, n) {
     n = n.toLowerCase();
     if (n === 'colon') return ':';
     if (n.charAt(0) === '#') {
@@ -13321,6 +13483,30 @@ function replace(regex, opt) {
     return self;
   };
 }
+
+function resolveUrl(base, href) {
+  if (!baseUrls[' ' + base]) {
+    // we can ignore everything in base after the last slash of its path component,
+    // but we might need to add _that_
+    // https://tools.ietf.org/html/rfc3986#section-3
+    if (/^[^:]+:\/*[^/]*$/.test(base)) {
+      baseUrls[' ' + base] = base + '/';
+    } else {
+      baseUrls[' ' + base] = base.replace(/[^/]*$/, '');
+    }
+  }
+  base = baseUrls[' ' + base];
+
+  if (href.slice(0, 2) === '//') {
+    return base.replace(/:[\s\S]*/, ':') + href;
+  } else if (href.charAt(0) === '/') {
+    return base.replace(/(:\/*[^/]*)[\s\S]*/, '$1') + href;
+  } else {
+    return base + href;
+  }
+}
+var baseUrls = {};
+var originIndependentUrl = /^$|^[a-z][a-z0-9+.-]*:|^[?#]/i;
 
 function noop() {}
 noop.exec = noop;
@@ -13423,7 +13609,7 @@ function marked(src, opt, callback) {
   } catch (e) {
     e.message += '\nPlease report this to https://github.com/chjj/marked.';
     if ((opt || marked.defaults).silent) {
-      return '<p>An error occured:</p><pre>'
+      return '<p>An error occurred:</p><pre>'
         + escape(e.message + '', true)
         + '</pre>';
     }
@@ -13456,7 +13642,8 @@ marked.defaults = {
   smartypants: false,
   headerPrefix: '',
   renderer: new Renderer,
-  xhtml: false
+  xhtml: false,
+  baseUrl: null
 };
 
 /**
@@ -13628,19 +13815,19 @@ var supportsColor$3 = (function () {
 
 
 var defineProps = Object.defineProperties;
-var isSimpleWindowsTerm$1 = process.platform === 'win32' && !/^xterm/i.test(process.env.TERM);
+var isSimpleWindowsTerm = process.platform === 'win32' && !/^xterm/i.test(process.env.TERM);
 
-function Chalk$1(options) {
+function Chalk(options) {
 	// detect mode if not set manually
 	this.enabled = !options || options.enabled === undefined ? supportsColor$3 : options.enabled;
 }
 
 // use bright blue on Windows as the normal blue color is illegible
-if (isSimpleWindowsTerm$1) {
+if (isSimpleWindowsTerm) {
 	ansiStyles$3.blue.open = '\u001b[94m';
 }
 
-var styles$1 = (function () {
+var styles = (function () {
 	var ret = {};
 
 	Object.keys(ansiStyles$3).forEach(function (key) {
@@ -13648,7 +13835,7 @@ var styles$1 = (function () {
 
 		ret[key] = {
 			get: function () {
-				return build$1.call(this, this._styles.concat(key));
+				return build.call(this, this._styles.concat(key));
 			}
 		};
 	});
@@ -13656,11 +13843,11 @@ var styles$1 = (function () {
 	return ret;
 })();
 
-var proto$5 = defineProps(function chalk() {}, styles$1);
+var proto$4 = defineProps(function chalk() {}, styles);
 
-function build$1(_styles) {
+function build(_styles) {
 	var builder = function () {
-		return applyStyle$1.apply(builder, arguments);
+		return applyStyle.apply(builder, arguments);
 	};
 
 	builder._styles = _styles;
@@ -13668,12 +13855,12 @@ function build$1(_styles) {
 	// __proto__ is used because we must return a function, but there is
 	// no way to create a function with a different prototype.
 	/* eslint-disable no-proto */
-	builder.__proto__ = proto$5;
+	builder.__proto__ = proto$4;
 
 	return builder;
 }
 
-function applyStyle$1() {
+function applyStyle() {
 	// support varags, but simply cast to string in case there's only one arg
 	var args = arguments;
 	var argsLen = args.length;
@@ -13697,7 +13884,7 @@ function applyStyle$1() {
 	// see https://github.com/chalk/chalk/issues/58
 	// If we're on Windows and we're dealing with a gray color, temporarily make 'dim' a noop.
 	var originalDim = ansiStyles$3.dim.open;
-	if (isSimpleWindowsTerm$1 && (nestedStyles.indexOf('gray') !== -1 || nestedStyles.indexOf('grey') !== -1)) {
+	if (isSimpleWindowsTerm && (nestedStyles.indexOf('gray') !== -1 || nestedStyles.indexOf('grey') !== -1)) {
 		ansiStyles$3.dim.open = '';
 	}
 
@@ -13719,10 +13906,10 @@ function applyStyle$1() {
 function init() {
 	var ret = {};
 
-	Object.keys(styles$1).forEach(function (name) {
+	Object.keys(styles).forEach(function (name) {
 		ret[name] = {
 			get: function () {
-				return build$1.call(this, [name]);
+				return build.call(this, [name]);
 			}
 		};
 	});
@@ -13730,18 +13917,18 @@ function init() {
 	return ret;
 }
 
-defineProps(Chalk$1.prototype, init());
+defineProps(Chalk.prototype, init());
 
-var chalk$3 = new Chalk$1();
+var chalk$3 = new Chalk();
 var styles_1 = ansiStyles$3;
 var hasColor = hasAnsi;
 var stripColor = stripAnsi$3;
-var supportsColor_1$1 = supportsColor$3;
+var supportsColor_1 = supportsColor$3;
 
 chalk$3.styles = styles_1;
 chalk$3.hasColor = hasColor;
 chalk$3.stripColor = stripColor;
-chalk$3.supportsColor = supportsColor_1$1;
+chalk$3.supportsColor = supportsColor_1;
 
 var styles_1$1 = createCommonjsModule(function (module) {
 /*
@@ -14739,7 +14926,7 @@ function overArg(func, transform) {
 var objectProto$1 = Object.prototype;
 
 /** Used to check objects for own properties. */
-var hasOwnProperty$2 = objectProto$1.hasOwnProperty;
+var hasOwnProperty$3 = objectProto$1.hasOwnProperty;
 
 /**
  * Used to resolve the
@@ -14777,7 +14964,7 @@ function arrayLikeKeys(value, inherited) {
       skipIndexes = !!length;
 
   for (var key in value) {
-    if ((inherited || hasOwnProperty$2.call(value, key)) &&
+    if ((inherited || hasOwnProperty$3.call(value, key)) &&
         !(skipIndexes && (key == 'length' || isIndex(key, length)))) {
       result.push(key);
     }
@@ -14797,7 +14984,7 @@ function arrayLikeKeys(value, inherited) {
  */
 function assignValue(object, key, value) {
   var objValue = object[key];
-  if (!(hasOwnProperty$2.call(object, key) && eq(objValue, value)) ||
+  if (!(hasOwnProperty$3.call(object, key) && eq(objValue, value)) ||
       (value === undefined && !(key in object))) {
     object[key] = value;
   }
@@ -14816,7 +15003,7 @@ function baseKeys(object) {
   }
   var result = [];
   for (var key in Object(object)) {
-    if (hasOwnProperty$2.call(object, key) && key != 'constructor') {
+    if (hasOwnProperty$3.call(object, key) && key != 'constructor') {
       result.push(key);
     }
   }
@@ -15022,7 +15209,7 @@ function eq(value, other) {
  */
 function isArguments$1(value) {
   // Safari 8.1 makes `arguments.callee` enumerable in strict mode.
-  return isArrayLikeObject$1(value) && hasOwnProperty$2.call(value, 'callee') &&
+  return isArrayLikeObject$1(value) && hasOwnProperty$3.call(value, 'callee') &&
     (!propertyIsEnumerable$1.call(value, 'callee') || objectToString$1.call(value) == argsTag$1);
 }
 
@@ -15254,13 +15441,13 @@ function isObjectLike$1(value) {
  * _.assign({ 'a': 0 }, new Foo, new Bar);
  * // => { 'a': 1, 'c': 3 }
  */
-var assign$1 = createAssigner(function(object, source) {
+var assign$2 = createAssigner(function(object, source) {
   if (nonEnumShadows || isPrototype(source) || isArrayLike$1(source)) {
     copyObject(source, keys$2(source), object);
     return;
   }
   for (var key in source) {
-    if (hasOwnProperty$2.call(source, key)) {
+    if (hasOwnProperty$3.call(source, key)) {
       assignValue(object, key, source[key]);
     }
   }
@@ -15298,7 +15485,7 @@ function keys$2(object) {
   return isArrayLike$1(object) ? arrayLikeKeys(object) : baseKeys(object);
 }
 
-var lodash_assign = assign$1;
+var lodash_assign = assign$2;
 
 var esprima = createCommonjsModule(function (module, exports) {
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -22579,7 +22766,7 @@ var maskSrcKey = (function() {
 var funcToString = funcProto.toString;
 
 /** Used to check objects for own properties. */
-var hasOwnProperty$3 = objectProto$2.hasOwnProperty;
+var hasOwnProperty$4 = objectProto$2.hasOwnProperty;
 
 /**
  * Used to resolve the
@@ -22590,7 +22777,7 @@ var objectToString$2 = objectProto$2.toString;
 
 /** Used to detect if a method is native. */
 var reIsNative = RegExp('^' +
-  funcToString.call(hasOwnProperty$3).replace(reRegExpChar, '\\$&')
+  funcToString.call(hasOwnProperty$4).replace(reRegExpChar, '\\$&')
   .replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, '$1.*?') + '$'
 );
 
@@ -22635,7 +22822,7 @@ function arrayLikeKeys$1(value, inherited) {
       skipIndexes = !!length;
 
   for (var key in value) {
-    if ((inherited || hasOwnProperty$3.call(value, key)) &&
+    if ((inherited || hasOwnProperty$4.call(value, key)) &&
         !(skipIndexes && (key == 'length' || isIndex$1(key, length)))) {
       result.push(key);
     }
@@ -22683,7 +22870,7 @@ function baseKeys$1(object) {
   }
   var result = [];
   for (var key in Object(object)) {
-    if (hasOwnProperty$3.call(object, key) && key != 'constructor') {
+    if (hasOwnProperty$4.call(object, key) && key != 'constructor') {
       result.push(key);
     }
   }
@@ -22835,7 +23022,7 @@ function toSource(func) {
  */
 function isArguments$2(value) {
   // Safari 8.1 makes `arguments.callee` enumerable in strict mode.
-  return isArrayLikeObject$2(value) && hasOwnProperty$3.call(value, 'callee') &&
+  return isArrayLikeObject$2(value) && hasOwnProperty$4.call(value, 'callee') &&
     (!propertyIsEnumerable$2.call(value, 'callee') || objectToString$2.call(value) == argsTag$2);
 }
 
@@ -32257,6 +32444,9 @@ exports.SEMVER_SPEC_VERSION = '2.0.0';
 var MAX_LENGTH = 256;
 var MAX_SAFE_INTEGER = Number.MAX_SAFE_INTEGER || 9007199254740991;
 
+// Max safe segment length for coercion.
+var MAX_SAFE_COMPONENT_LENGTH = 16;
+
 // The actual regexps go on exports.re
 var re = exports.re = [];
 var src = exports.src = [];
@@ -32391,6 +32581,15 @@ var XRANGE = R++;
 src[XRANGE] = '^' + src[GTLT] + '\\s*' + src[XRANGEPLAIN] + '$';
 var XRANGELOOSE = R++;
 src[XRANGELOOSE] = '^' + src[GTLT] + '\\s*' + src[XRANGEPLAINLOOSE] + '$';
+
+// Coercion.
+// Extract anything that could conceivably be a part of a valid semver
+var COERCE = R++;
+src[COERCE] = '(?:^|[^\\d])' +
+              '(\\d{1,' + MAX_SAFE_COMPONENT_LENGTH + '})' +
+              '(?:\\.(\\d{1,' + MAX_SAFE_COMPONENT_LENGTH + '}))?' +
+              '(?:\\.(\\d{1,' + MAX_SAFE_COMPONENT_LENGTH + '}))?' +
+              '(?:$|[^\\d])';
 
 // Tilde ranges.
 // Meaning is "reasonably at or greater than"
@@ -33529,6 +33728,22 @@ function intersects(r1, r2, loose) {
   r1 = new Range(r1, loose);
   r2 = new Range(r2, loose);
   return r1.intersects(r2)
+}
+
+exports.coerce = coerce;
+function coerce(version) {
+  if (version instanceof SemVer)
+    return version;
+
+  if (typeof version !== 'string')
+    return null;
+
+  var match = version.match(re[COERCE]);
+
+  if (match == null)
+    return null;
+
+  return parse((match[1] || '0') + '.' + (match[2] || '0') + '.' + (match[3] || '0')); 
 }
 });
 
