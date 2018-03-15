@@ -20,7 +20,7 @@
     "github": "^9.2.0",
     "ink": "^0.4.1",
     "ink-spinner": "^1.0.0",
-    "ink-tab": "^1.0.1",
+    "ink-tab": "^1.1.0",
     "jest": "^20.0.4",
     "lint-staged": "^4.2.0",
     "marked": "^0.3.6",

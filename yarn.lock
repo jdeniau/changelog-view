@@ -1644,9 +1644,9 @@ ink-spinner@^1.0.0:
     object.omit "^2.0.1"
     prop-types "^15.5.10"
 
-ink-tab@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/ink-tab/-/ink-tab-1.0.1.tgz#f4ef70101484054348fcdcdf30b8ca212ded232c"
+ink-tab@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/ink-tab/-/ink-tab-1.1.0.tgz#d31ffe60a56c09e62b0e0ab5198a5a866e199b93"
 
 ink@^0.4.1:
   version "0.4.1"
