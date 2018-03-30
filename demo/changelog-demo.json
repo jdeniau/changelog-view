@@ -1,0 +1,262 @@
+{
+  "version": 1,
+  "width": 177,
+  "height": 34,
+  "duration": 14.267238,
+  "command": "npx changelog-view rest-client-sdk webpack-dev-server prettier-eslint",
+  "title": null,
+  "env": {
+    "TERM": "screen-256color",
+    "SHELL": "/bin/zsh"
+  },
+  "stdout": [
+    [
+      1.179431,
+      "\u001b[?25l"
+    ],
+    [
+      0.235308,
+      "\u001b[?25l"
+    ],
+    [
+      0.003196,
+      "⠋ Loading\r\n\u001b[38;5;244m0. \u001b[39m\u001b[42mrest-client-sdk\u001b[49m\u001b[2m | \u001b[22m\u001b[38;5;244m1. \u001b[39mwebpack-dev-server\u001b[2m | \u001b[22m\u001b[38;5;244m2. \u001b[39mprettier-eslint\r\n\r\n"
+    ],
+    [
+      0.002234,
+      "\u001b[?25l"
+    ],
+    [
+      0.000594,
+      "\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[G⠋ Loading\r\n\u001b[38;5;244m0. \u001b[39m\u001b[42mrest-client-sdk\u001b[49m\u001b[2m | \u001b[22m\u001b[38;5;244m1. \u001b[39mwebpack-dev-server\u001b[2m | \u001b[22m\u001b[38;5;244m2. \u001b[39mprettier-eslint\r\n\r\n"
+    ],
+    [
+      0.001367,
+      "\u001b[?25l"
+    ],
+    [
+      0.000545,
+      "\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[G⠋ Loading\r\n\u001b[38;5;244m0. \u001b[39m\u001b[42mrest-client-sdk\u001b[49m\u001b[2m | \u001b[22m\u001b[38;5;244m1. \u001b[39mwebpack-dev-server\u001b[2m | \u001b[22m\u001b[38;5;244m2. \u001b[39mprettier-eslint\r\n\r\n"
+    ],
+    [
+      0.047892,
+      "\u001b[?25l"
+    ],
+    [
+      0.000367,
+      "\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[G⠙ Loading\r\n\u001b[38;5;244m0. \u001b[39m\u001b[42mrest-client-sdk\u001b[49m\u001b[2m | \u001b[22m\u001b[38;5;244m1. \u001b[39mwebpack-dev-server\u001b[2m | \u001b[22m\u001b[38;5;244m2. \u001b[39mprettier-eslint\r\n\r\n"
+    ],
+    [
+      0.081589,
+      "\u001b[?25l"
+    ],
+    [
+      0.000463,
+      "\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[G⠹ Loading\r\n\u001b[38;5;244m0. \u001b[39m\u001b[42mrest-client-sdk\u001b[49m\u001b[2m | \u001b[22m\u001b[38;5;244m1. \u001b[39mwebpack-dev-server\u001b[2m | \u001b[22m\u001b[38;5;244m2. \u001b[39mprettier-eslint\r\n\r\n"
+    ],
+    [
+      0.103554,
+      "\u001b[?25l"
+    ],
+    [
+      0.001572,
+      "\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[G\u001b[35m\u001b[4m\u001b[1m# CHANGELOG for \"mapado/rest-client-js-sdk\" (current version: \u001b[33m2.0.0\u001b[35m)\u001b[22m\u001b[24m\u001b[39m\r\n\r\n\u001b[32m\u001b[1m## 2.0.1\u001b[22m\u001b[39m\r\n\r\n\u001b[32m\u001b[1m### Changed\u001b[22m\u001b[39m\r\n\r\n     * \u001b[0mBetter packaging system \u001b[34m#48 (\u001b[34m\u001b[4mhttps://github.com/mapado/rest-client-js-sdk/pull/48\u001b[24m\u001b[34m)\u001b[39m\u001b[0m\r\n\r\n\r\n\u001b[38;5;244m0. \u001b[39m\u001b[42mrest-client-sdk\u001b[49m\u001b[2m | \u001b[22m\u001b[38;5;244m1. \u001b[39mwebpack-dev-server\u001b[2m | \u001b[22m\u001b[38;5;244m2. \u001b[39mprettier-eslint\r\n\r\n"
+    ],
+    [
+      1.440125,
+      "\u001b[?25l"
+    ],
+    [
+      0.000835,
+      "\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[G⠋ Loading\r\n\u001b[38;5;244m0. \u001b[39mrest-client-sdk\u001b[2m | \u001b[22m\u001b[38;5;244m1. \u001b[39m\u001b[42mwebpack-dev-server\u001b[49m\u001b[2m | \u001b[22m\u001b[38;5;244m2. \u001b[39mprettier-eslint\r\n\r\n"
+    ],
+    [
+      0.001322,
+      "\u001b[?25l"
+    ],
+    [
+      0.000431,
+      "\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[G⠋ Loading\r\n\u001b[38;5;244m0. \u001b[39mrest-client-sdk\u001b[2m | \u001b[22m\u001b[38;5;244m1. \u001b[39m\u001b[42mwebpack-dev-server\u001b[49m\u001b[2m | \u001b[22m\u001b[38;5;244m2. \u001b[39mprettier-eslint\r\n\r\n"
+    ],
+    [
+      0.078165,
+      "\u001b[?25l"
+    ],
+    [
+      0.000467,
+      "\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[G⠙ Loading\r\n\u001b[38;5;244m0. \u001b[39mrest-client-sdk\u001b[2m | \u001b[22m\u001b[38;5;244m1. \u001b[39m\u001b[42mwebpack-dev-server\u001b[49m\u001b[2m | \u001b[22m\u001b[38;5;244m2. \u001b[39mprettier-eslint\r\n\r\n"
+    ],
+    [
+      0.080225,
+      "\u001b[?25l"
+    ],
+    [
+      0.000928,
+      "\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[G⠹ Loading\r\n\u001b[38;5;244m0. \u001b[39mrest-client-sdk\u001b[2m | \u001b[22m\u001b[38;5;244m1. \u001b[39m\u001b[42mwebpack-dev-server\u001b[49m\u001b[2m | \u001b[22m\u001b[38;5;244m2. \u001b[39mprettier-eslint\r\n\r\n"
+    ],
+    [
+      0.08053,
+      "\u001b[?25l"
+    ],
+    [
+      0.000949,
+      "\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[G⠸ Loading\r\n\u001b[38;5;244m0. \u001b[39mrest-client-sdk\u001b[2m | \u001b[22m\u001b[38;5;244m1. \u001b[39m\u001b[42mwebpack-dev-server\u001b[49m\u001b[2m | \u001b[22m\u001b[38;5;244m2. \u001b[39mprettier-eslint\r\n\r\n"
+    ],
+    [
+      0.077465,
+      "\u001b[?25l"
+    ],
+    [
+      0.000451,
+      "\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[G⠼ Loading\r\n\u001b[38;5;244m0. \u001b[39mrest-client-sdk\u001b[2m | \u001b[22m\u001b[38;5;244m1. \u001b[39m\u001b[42mwebpack-dev-server\u001b[49m\u001b[2m | \u001b[22m\u001b[38;5;244m2. \u001b[39mprettier-eslint\r\n\r\n"
+    ],
+    [
+      0.081956,
+      "\u001b[?25l\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[G⠴ Loading\r\n\u001b[38;5;244m0. \u001b[39mrest-client-sdk\u001b[2m | \u001b[22m\u001b[38;5;244m1. \u001b[39m\u001b[42mwebpack-dev-server\u001b[49m\u001b[2m | \u001b[22m\u001b[38;5;244m2. \u001b[39mprettier-eslint\r\n\r\n"
+    ],
+    [
+      0.080971,
+      "\u001b[?25l"
+    ],
+    [
+      0.000771,
+      "\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[G⠦ Loading\r\n\u001b[38;5;244m0. \u001b[39mrest-client-sdk\u001b[2m | \u001b[22m\u001b[38;5;244m1. \u001b[39m\u001b[42mwebpack-dev-server\u001b[49m\u001b[2m | \u001b[22m\u001b[38;5;244m2. \u001b[39mprettier-eslint\r\n\r\n"
+    ],
+    [
+      0.080364,
+      "\u001b[?25l"
+    ],
+    [
+      0.000959,
+      "\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[G⠧ Loading\r\n\u001b[38;5;244m0. \u001b[39mrest-client-sdk\u001b[2m | \u001b[22m\u001b[38;5;244m1. \u001b[39m\u001b[42mwebpack-dev-server\u001b[49m\u001b[2m | \u001b[22m\u001b[38;5;244m2. \u001b[39mprettier-eslint\r\n\r\n"
+    ],
+    [
+      0.079655,
+      "\u001b[?25l\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[G⠇ Loading\r\n\u001b[38;5;244m0. \u001b[39mrest-client-sdk\u001b[2m | \u001b[22m\u001b[38;5;244m1. \u001b[39m\u001b[42mwebpack-dev-server\u001b[49m\u001b[2m | \u001b[22m\u001b[38;5;244m2. \u001b[39mprettier-eslint\r\n\r\n"
+    ],
+    [
+      0.082551,
+      "\u001b[?25l"
+    ],
+    [
+      0.00268,
+      "\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[G⠏ Loading\r\n\u001b[38;5;244m0. \u001b[39mrest-client-sdk\u001b[2m | \u001b[22m\u001b[38;5;244m1. \u001b[39m\u001b[42mwebpack-dev-server\u001b[49m\u001b[2m | \u001b[22m\u001b[38;5;244m2. \u001b[39mprettier-eslint\r\n\r\n"
+    ],
+    [
+      0.048604,
+      "\u001b[?25l"
+    ],
+    [
+      0.00727,
+      "\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[G\u001b[35m\u001b[4m\u001b[1m# CHANGELOG for \"webpack/webpack-dev-server\" (current version: \u001b[33m3.0.0\u001b[35m)\u001b[22m\u001b[24m\u001b[39m\r\n\r\n\u001b[35m\u001b[4m\u001b[1m# 3.1.1\u001b[22m\u001b[24m\u001b[39m\r\n\r\n     * \u001b[0mUpdate to \u001b[34mwebpack-dev-middleware v3 (\u001b[34m\u001b[4mhttps://github.com/webpack/webpack-dev-middleware/releases/tag/v3.0.0\u001b[24m\u001b[34m)\u001b[39m, which removes the deprecation warnings from webpack.\u001b[0m\r\n\r\n\u001b[35m\u001b[4m\u001b[1m# 3.1.0\u001b[22m\u001b[24m\u001b[39m\r\n\r\n\u001b[32m\u001b[1m## Updates\u001b[22m\u001b[39m\r\n\r\n     * \u001b[0mFancy logging; \u001b[33mwebpack-log\u001b[39m is now used for logging to the terminal (webpack-dev-middleware was already using this).\u001b[0m\r\n"
+    ],
+    [
+      5.8e-05,
+      "     * \u001b[0mThe \u001b[33mlogLevel\u001b[39m option is added for more fine-grained control over the logging.\u001b[0m\r\n\r\n\u001b[32m\u001b[1m## Bugfixes\u001b[22m\u001b[39m\r\n\r\n     * \u001b[0mMultiCompiler was broken with webpack 4.\u001b[0m\r\n     * \u001b[0mFix deprecation warnings caused by webpack 4. Note that you will still see some deprecation warnings because webpack-dev-middleware has not been updated yet.\u001b[0m\r\n\r\n\r\n\u001b[38;5;244m0. \u001b[39mrest-client-sdk\u001b[2m | \u001b[22m\u001b[38;5;244m1. \u001b[39m\u001b[42mwebpack-dev-server\u001b[49m\u001b[2m | \u001b[22m\u001b[38;5;244m2. \u001b[39mprettier-eslint\r\n\r\n"
+    ],
+    [
+      1.875119,
+      "\u001b[?25l"
+    ],
+    [
+      0.000288,
+      "\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[G⠋ Loading\r\n\u001b[38;5;244m0. \u001b[39mrest-client-sdk\u001b[2m | \u001b[22m\u001b[38;5;244m1. \u001b[39mwebpack-dev-server\u001b[2m | \u001b[22m\u001b[38;5;244m2. \u001b[39m\u001b[42mprettier-eslint\u001b[49m\r\n\r\n"
+    ],
+    [
+      0.000957,
+      "\u001b[?25l"
+    ],
+    [
+      0.000237,
+      "\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[G⠋ Loading\r\n\u001b[38;5;244m0. \u001b[39mrest-client-sdk\u001b[2m | \u001b[22m\u001b[38;5;244m1. \u001b[39mwebpack-dev-server\u001b[2m | \u001b[22m\u001b[38;5;244m2. \u001b[39m\u001b[42mprettier-eslint\u001b[49m\r\n\r\n"
+    ],
+    [
+      0.080923,
+      "\u001b[?25l"
+    ],
+    [
+      0.000505,
+      "\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[G⠙ Loading\r\n\u001b[38;5;244m0. \u001b[39mrest-client-sdk\u001b[2m | \u001b[22m\u001b[38;5;244m1. \u001b[39mwebpack-dev-server\u001b[2m | \u001b[22m\u001b[38;5;244m2. \u001b[39m\u001b[42mprettier-eslint\u001b[49m\r\n\r\n"
+    ],
+    [
+      0.079973,
+      "\u001b[?25l"
+    ],
+    [
+      0.000694,
+      "\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[G⠹ Loading\r\n\u001b[38;5;244m0. \u001b[39mrest-client-sdk\u001b[2m | \u001b[22m\u001b[38;5;244m1. \u001b[39mwebpack-dev-server\u001b[2m | \u001b[22m\u001b[38;5;244m2. \u001b[39m\u001b[42mprettier-eslint\u001b[49m\r\n\r\n"
+    ],
+    [
+      0.078449,
+      "\u001b[?25l"
+    ],
+    [
+      0.00051,
+      "\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[G⠸ Loading\r\n\u001b[38;5;244m0. \u001b[39mrest-client-sdk\u001b[2m | \u001b[22m\u001b[38;5;244m1. \u001b[39mwebpack-dev-server\u001b[2m | \u001b[22m\u001b[38;5;244m2. \u001b[39m\u001b[42mprettier-eslint\u001b[49m\r\n\r\n"
+    ],
+    [
+      0.080124,
+      "\u001b[?25l"
+    ],
+    [
+      0.000484,
+      "\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[G⠼ Loading\r\n\u001b[38;5;244m0. \u001b[39mrest-client-sdk\u001b[2m | \u001b[22m\u001b[38;5;244m1. \u001b[39mwebpack-dev-server\u001b[2m | \u001b[22m\u001b[38;5;244m2. \u001b[39m\u001b[42mprettier-eslint\u001b[49m\r\n\r\n"
+    ],
+    [
+      0.078579,
+      "\u001b[?25l"
+    ],
+    [
+      0.000409,
+      "\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[G⠴ Loading\r\n\u001b[38;5;244m0. \u001b[39mrest-client-sdk\u001b[2m | \u001b[22m\u001b[38;5;244m1. \u001b[39mwebpack-dev-server\u001b[2m | \u001b[22m\u001b[38;5;244m2. \u001b[39m\u001b[42mprettier-eslint\u001b[49m\r\n\r\n"
+    ],
+    [
+      0.081938,
+      "\u001b[?25l"
+    ],
+    [
+      0.000372,
+      "\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[G⠦ Loading\r\n\u001b[38;5;244m0. \u001b[39mrest-client-sdk\u001b[2m | \u001b[22m\u001b[38;5;244m1. \u001b[39mwebpack-dev-server\u001b[2m | \u001b[22m\u001b[38;5;244m2. \u001b[39m\u001b[42mprettier-eslint\u001b[49m\r\n\r\n"
+    ],
+    [
+      0.081401,
+      "\u001b[?25l"
+    ],
+    [
+      0.000606,
+      "\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[G⠧ Loading\r\n\u001b[38;5;244m0. \u001b[39mrest-client-sdk\u001b[2m | \u001b[22m\u001b[38;5;244m1. \u001b[39mwebpack-dev-server\u001b[2m | \u001b[22m\u001b[38;5;244m2. \u001b[39m\u001b[42mprettier-eslint\u001b[49m\r\n\r\n"
+    ],
+    [
+      0.071734,
+      "\u001b[?25l"
+    ],
+    [
+      0.001722,
+      "\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[G\u001b[35m\u001b[4m\u001b[1m# CHANGELOG for \"prettier/prettier-eslint\" (current version: \u001b[33m8.8.0\u001b[35m)\u001b[22m\u001b[24m\u001b[39m\r\n\r\n\u001b[35m\u001b[4m\u001b[1m# 8.8.1\u001b[22m\u001b[24m\u001b[39m\r\n\r\n\u001b[0m<a name=\"8.8.1\"></a>\u001b[0m\r\n\r\n\u001b[32m\u001b[1m## \u001b[34m8.8.1 (\u001b[34m\u001b[4mhttps://github.com/prettier/prettier-eslint/compare/v8.8.0...v8.8.1\u001b[24m\u001b[34m)\u001b[32m (2018-01-21)\u001b[22m\u001b[39m\r\n\r\n\u001b[32m\u001b[1m### Bug Fixes\u001b[22m\u001b[39m\r\n\r\n     * \u001b[0mDon't turn off valid-jsdoc as that rule is actually fixable (\u001b[34md359fad (\u001b[34m\u001b[4mhttps://github.com/prettier/prettier-eslint/commit/d359fad\u001b[24m\u001b[34m)\u001b[39m)\u001b[0m\r\n     * \u001b[0mRevert commit 17f30b4d2dcc0e95ed2101513563c81bd043f6ba (\u001b[34m685f4be (\u001b[34m\u001b[4mhttps://github.com/prettier/prettier-eslint/commit/685f4be\u001b[24m\u001b[34m)\u001b[39m)\u001b[0m\r\n\r\n\r\n"
+    ],
+    [
+      3.6e-05,
+      "\u001b[38;5;244m0. \u001b[39mrest-client-sdk\u001b[2m | \u001b[22m\u001b[38;5;244m1. \u001b[39mwebpack-dev-server\u001b[2m | \u001b[22m\u001b[38;5;244m2. \u001b[39m\u001b[42mprettier-eslint\u001b[49m\r\n\r\n"
+    ],
+    [
+      2.966049,
+      "\u001b[?25l\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[G⠋ Loading\r\n\u001b[38;5;244m0. \u001b[39m\u001b[42mrest-client-sdk\u001b[49m\u001b[2m | \u001b[22m\u001b[38;5;244m1. \u001b[39mwebpack-dev-server\u001b[2m | \u001b[22m\u001b[38;5;244m2. \u001b[39mprettier-eslint\r\n\r\n\u001b[?25l\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[G⠋ Loading\r\n\u001b[38;5;244m0. \u001b[39m\u001b[42mrest-client-sdk\u001b[49m\u001b[2m | \u001b[22m\u001b[38;5;244m1. \u001b[39mwebpack-dev-server\u001b[2m | \u001b[22m\u001b[38;5;244m2. \u001b[39mprettier-eslint\r\n\r\n"
+    ],
+    [
+      0.002568,
+      "\u001b[?25l"
+    ],
+    [
+      0.00063,
+      "\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[1A\u001b[2K\u001b[G\u001b[35m\u001b[4m\u001b[1m# CHANGELOG for \"mapado/rest-client-js-sdk\" (current version: \u001b[33m2.0.0\u001b[35m)\u001b[22m\u001b[24m\u001b[39m\r\n\r\n\u001b[32m\u001b[1m## 2.0.1\u001b[22m\u001b[39m\r\n\r\n\u001b[32m\u001b[1m### Changed\u001b[22m\u001b[39m\r\n\r\n     * \u001b[0mBetter packaging system \u001b[34m#48 (\u001b[34m\u001b[4mhttps://github.com/mapado/rest-client-js-sdk/pull/48\u001b[24m\u001b[34m)\u001b[39m\u001b[0m\r\n\r\n\r\n\u001b[38;5;244m0. \u001b[39m\u001b[42mrest-client-sdk\u001b[49m\u001b[2m | \u001b[22m\u001b[38;5;244m1. \u001b[39mwebpack-dev-server\u001b[2m | \u001b[22m\u001b[38;5;244m2. \u001b[39mprettier-eslint\r\n\r\n"
+    ],
+    [
+      4.426122,
+      "\u001b[?25h"
+    ],
+    [
+      0.008035,
+      "\u001b[?25h"
+    ]
+  ]
+}

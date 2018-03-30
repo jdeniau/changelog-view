@@ -6,7 +6,7 @@ Tool view changelog in console.
 It list only the changes between the specified version and the latest version.
 You can see it as a `git diff` between version for changelogs.
 
-![demo](demo.gif)
+![demo](demo/demo.svg)
 
 ## Usage
 With npx (require `npm >= 5.2`):
