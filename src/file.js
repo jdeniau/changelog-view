@@ -4,6 +4,7 @@ import semver from 'semver';
 import { convertGithubReleasesToVersionList } from './github-release';
 import { convertMarkdownToVersionList } from './markdown';
 import { extractNextLink } from './github-tools';
+import logger from './logger';
 
 const TEST_PROCESSES = [
   {
@@ -36,13 +37,18 @@ class FileNotFound extends Error {
 class EmptyMarkdownFile extends Error {}
 
 export async function getPackageData(packageName, gtThanVersion = null) {
+  logger.log(`Package: ${packageName}, current version: ${gtThanVersion}`);
   for (let i = 0; i < TEST_PROCESSES.length; i++) {
     const fileToTest = TEST_PROCESSES[i];
+
+    logger.log('testing file:', fileToTest);
 
     try {
       switch (fileToTest.type) {
         case 'github-file':
-          const url = `https://raw.githubusercontent.com/${packageName}/master/${fileToTest.fileName}`;
+          const url = `https://raw.githubusercontent.com/${packageName}/master/${
+            fileToTest.fileName
+          }`;
           const ghFileResult = await innerFetch(url);
 
           const content = await ghFileResult.text();
@@ -63,7 +69,9 @@ export async function getPackageData(packageName, gtThanVersion = null) {
           break;
 
         default:
-          const msg = `Unable to determine file type to test: "${fileToTest.type}"`;
+          const msg = `Unable to determine file type to test: "${
+            fileToTest.type
+          }"`;
           throw new Error(msg);
           break;
       }
@@ -93,7 +101,14 @@ export function getVersionListForPackage(packageName, gtThanVersion) {
       }
     })
     .then(versionList => {
-      return filterVersionList(versionList, gtThanVersion);
+      const filteredVersionList = filterVersionList(versionList, gtThanVersion);
+
+      logger.log(
+        `found ${
+          filteredVersionList.length
+        } versions greater than "${gtThanVersion}" for package "${packageName}"`
+      );
+      return filteredVersionList;
     });
 }
 
