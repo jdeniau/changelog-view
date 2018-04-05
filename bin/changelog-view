@@ -7208,6 +7208,30 @@ class Logger {
 
 const logger = new Logger();
 
+var name = "changelog-view";
+var version = "1.7.0";
+var description = "Tool to view changelog of package in console";
+var bin = { "changelog-view": "bin/changelog-view" };
+var repository = "https://github.com/jdeniau/changelog-view";
+var author = "Julien Deniau <julien.deniau@gmail.com>";
+var license = "MIT";
+var devDependencies = { "babel-cli": "^6.26.0", "babel-core": "^6.26.0", "babel-plugin-external-helpers": "^6.22.0", "babel-plugin-transform-builtin-extend": "^1.1.2", "babel-plugin-transform-react-jsx": "^6.24.1", "babel-polyfill": "^6.26.0", "babel-preset-env": "^1.6.0", "find-versions": "^2.0.0", "github": "^9.2.0", "ink": "^0.4.1", "ink-spinner": "^1.0.0", "ink-tab": "^1.1.0", "jest": "^20.0.4", "lint-staged": "^4.2.0", "marked": "^0.3.6", "marked-terminal": "^2.0.0", "marked-to-md": "^1.0.1", "minimist": "^1.2.0", "nock": "^9.1.6", "node-fetch": "^1.7.3", "prettier": "^1.10.0", "rollup": "^0.49.3", "rollup-plugin-babel": "^3.0.2", "rollup-plugin-commonjs": "^8.2.1", "rollup-plugin-json": "^2.3.0", "rollup-plugin-node-resolve": "^3.0.0", "semver": "^5.4.1" };
+var scripts = { "test": "jest", "build": "rollup -c && chmod a+x bin/changelog-view && (git commit -m 'build binary' bin/changelog-view || true)", "prepublishOnly": "npm run build", "precommit": "lint-staged" };
+var jest = { "transform": { ".+\\.(js)$": "babel-jest", ".+\\.(md)$": "<rootDir>/fileTransformer.js" } };
+var changelogViewPackage = {
+	name: name,
+	version: version,
+	description: description,
+	bin: bin,
+	repository: repository,
+	author: author,
+	license: license,
+	devDependencies: devDependencies,
+	scripts: scripts,
+	jest: jest,
+	"lint-staged": { "*.{js,jsx,json}": ["prettier --write", "git add"] }
+};
+
 var ansiEscapes = createCommonjsModule(function (module) {
 'use strict';
 const x = module.exports;
@@ -14920,9 +14944,9 @@ Table.prototype.toString = function (){
 
 var lib$2 = Table;
 
-var version = '0.0.1';
+var version$1 = '0.0.1';
 
-lib$2.version = version;
+lib$2.version = version$1;
 
 /**
  * lodash (Custom Build) <https://lodash.com/>
@@ -34505,6 +34529,7 @@ if (args.help || args._.length === 0) {
   // If they didn't ask for help, then this is not a "success"
   const log = args.help ? console.log : console.error;
   log('Usage: changelog-view <package@currentVersion> [<package@currentVersion> ...]');
+  log(`Current version: ${changelogViewPackage.version}`);
   log('');
   log('  See changelogs for your dependencies.');
   log('');

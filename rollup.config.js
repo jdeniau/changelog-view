@@ -12,6 +12,7 @@ export default {
     format: 'cjs',
   },
   plugins: [
+    json(),
     babel({
       exclude: 'node_modules/**', // only transpile our source code
       babelrc: false,
@@ -42,7 +43,6 @@ export default {
         ],
       ],
     }),
-    json(),
     resolve(),
     commonjs(),
   ],

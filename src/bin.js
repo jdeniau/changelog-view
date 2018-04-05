@@ -2,10 +2,8 @@
 import 'babel-polyfill';
 import minimist from 'minimist';
 import logger from './logger';
+import changelogViewPackage from '../package.json';
 import packageListChangeLog from './';
-
-const packages = [];
-const currentVersion = null;
 
 const args = minimist(process.argv.slice(2), {
   alias: {
@@ -20,6 +18,7 @@ if (args.help || args._.length === 0) {
   log(
     'Usage: changelog-view <package@currentVersion> [<package@currentVersion> ...]'
   );
+  log(`Current version: ${changelogViewPackage.version}`);
   log('');
   log('  See changelogs for your dependencies.');
   log('');

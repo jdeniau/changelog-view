@@ -4,8 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [1.7.0] - 2018-04-05
+### Added
+  * added current version of changelog-view when calling cli with `--help` option
+
 ## [1.6.0] - 2018-04-05
-### Changed
+### Added
   * add `--verbose` option to display debug informations
 
 ## [1.5.1] - 2018-04-02
