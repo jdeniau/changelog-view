@@ -27,7 +27,6 @@ export function semverize(title) {
 function getVersionFromTitle(title) {
   const version = semverize(title);
   if (!semver.valid(version)) {
-
     return null;
   }
 
@@ -65,19 +64,19 @@ export function convertMarkdownToVersionList(markdown) {
 
   let currentVersionToken = [];
   const reducedTokens = reduceTokens(tokens);
-  return Object.keys(reducedTokens).map((version) => {
-    // console.log(version, tokens);
-    const tokens = reducedTokens[version];
-    tokens.links = {};
-    const content = marked.parser(tokens, {
-      renderer: mdRenderer(new marked.Renderer()),
-    });
+  return Object.keys(reducedTokens)
+    .map(version => {
+      // console.log(version, tokens);
+      const tokens = reducedTokens[version];
+      tokens.links = {};
+      const content = marked.parser(tokens, {
+        renderer: mdRenderer(new marked.Renderer()),
+      });
 
-    return {
-      version,
-      content,
-    };
-  })
-    .sort((a, b) => semver.compare(b.version, a.version))
-  ;
+      return {
+        version,
+        content,
+      };
+    })
+    .sort((a, b) => semver.compare(b.version, a.version));
 }

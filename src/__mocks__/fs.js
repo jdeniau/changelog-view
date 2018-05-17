@@ -36,4 +36,3 @@ fs.readdirSync = readdirSync;
 fs.readFileSync = readFileSync;
 
 module.exports = fs;
-

@@ -1,6 +1,10 @@
 import simpleMarkdown from './__mocks__/simple.md';
 import keepachangelog from './__mocks__/keepachangelog.md';
-import { semverize, reduceTokens, convertMarkdownToVersionList } from './markdown';
+import {
+  semverize,
+  reduceTokens,
+  convertMarkdownToVersionList,
+} from './markdown';
 
 describe('markdown to version list converter', () => {
   test('semverize titles', () => {
