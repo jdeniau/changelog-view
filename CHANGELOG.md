@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [1.8.0] - 2018-05-17
+### Changed
+  * Upgrade lots of dependencies, but mainly ink-tab to 1.2 (and ink to 0.5)
+  * Fix an issue when no changelog was found
+  * Verbose mode is more verbose no help debbuging
+
 ## [1.7.0] - 2018-04-05
 ### Added
   * added current version of changelog-view when calling cli with `--help` option

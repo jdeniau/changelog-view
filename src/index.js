@@ -1,10 +1,11 @@
-import { h, render, Component, Text } from 'ink';
+import { h, render, Component, Fragment } from 'ink';
 import { Tabs, Tab } from 'ink-tab';
 import Spinner from 'ink-spinner';
 import marked from 'marked';
 import TerminalRenderer from 'marked-terminal';
 import { getVersionListForPackage } from './file';
 import getPackageInfo from './packageInfo';
+import logger from './logger';
 
 function terminalMarked(content) {
   return marked(content, {
@@ -50,7 +51,9 @@ function changelogView(packageString) {
       };
     })
     .catch(error => {
-      const message = `${e.message}\nTested files: ${e.testedProcess.map(
+      const message = `${
+        error.message
+      }\nTested files: ${error.testedProcess.map(
         f => `\n  * [${f.type}] ${f.fileName}`
       )}`;
       return {
@@ -110,6 +113,7 @@ class PackageListChangelog extends Component {
         });
       })
       .catch(result => {
+        logger.log(result);
         this.setState({
           changelogViewResult: result,
         });
@@ -123,11 +127,11 @@ class PackageListChangelog extends Component {
       <div>
         <div>
           {this.state.changelogViewResult ? (
-            <Text>{this.state.changelogViewResult.message}</Text>
+            <Fragment>{this.state.changelogViewResult.message}</Fragment>
           ) : (
-            <Text>
+            <Fragment>
               <Spinner orange /> Loading
-            </Text>
+            </Fragment>
           )}
         </div>
 

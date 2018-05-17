@@ -76,6 +76,7 @@ export async function getPackageData(packageName, gtThanVersion = null) {
           break;
       }
     } catch (e) {
+      logger.log(e);
       if (e instanceof FileNotFound || e instanceof EmptyMarkdownFile) {
         continue;
       }
