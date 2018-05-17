@@ -8,7 +8,6 @@ var events = _interopDefault(require('events'));
 var os = _interopDefault(require('os'));
 var readline = _interopDefault(require('readline'));
 var fs = _interopDefault(require('fs'));
-require('https');
 var path = _interopDefault(require('path'));
 var process$1 = _interopDefault(require('process'));
 
@@ -29187,7 +29186,7 @@ function getNodeRequestOptions(request) {
  */
 
 const http = require('http');
-const https$1 = require('https');
+const https = require('https');
 
 var _require$3 = require('stream');
 
@@ -29221,7 +29220,7 @@ function fetch(url, opts) {
 		const request = new Request(url, opts);
 		const options = getNodeRequestOptions(request);
 
-		const send = (options.protocol === 'https:' ? https$1 : http).request;
+		const send = (options.protocol === 'https:' ? https : http).request;
 
 		// send request
 		const req = send(options);

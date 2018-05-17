@@ -10,6 +10,7 @@ export default {
   output: {
     file: packageInfo.bin['changelog-view'],
     format: 'cjs',
+    banner: '#!/usr/bin/env node',
   },
   plugins: [
     json(),
@@ -63,5 +64,4 @@ export default {
     'events',
     'os',
   ],
-  banner: '#!/usr/bin/env node',
 };

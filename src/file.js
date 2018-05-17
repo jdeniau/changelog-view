@@ -1,4 +1,3 @@
-import https from 'https';
 import fetch from 'node-fetch';
 import semver from 'semver';
 import { convertGithubReleasesToVersionList } from './github-release';
