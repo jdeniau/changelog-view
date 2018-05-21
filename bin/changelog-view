@@ -6914,7 +6914,7 @@ class Logger {
 const logger = new Logger();
 
 var name = "changelog-view";
-var version = "1.8.0";
+var version = "1.8.1";
 var description = "Tool to view changelog of package in console";
 var bin = {
 	"changelog-view": "bin/changelog-view"
@@ -6933,7 +6933,7 @@ var devDependencies = {
 	"find-versions": "^2.0.0",
 	ink: "^0.5.0",
 	"ink-spinner": "git://github.com/jdeniau/ink-spinner.git#jd-fix-ink05-build",
-	"ink-tab": "^1.2.1",
+	"ink-tab": "^1.2.2",
 	jest: "^20.0.4",
 	"lint-staged": "^7.1.0",
 	marked: "^0.3.19",
@@ -11666,7 +11666,10 @@ class Tabs extends ink.Component {
       ),
       (0, ink.h)(
         ink.Color,
-        { bgGreen: this.state.activeTab === key },
+        {
+          bgGreen: this.state.activeTab === key,
+          black: this.state.activeTab === key
+        },
         child
       )
     ));
