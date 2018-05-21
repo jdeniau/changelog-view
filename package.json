@@ -1,6 +1,6 @@
 {
   "name": "changelog-view",
-  "version": "1.8.0",
+  "version": "1.8.1",
   "description": "Tool to view changelog of package in console",
   "bin": {
     "changelog-view": "bin/changelog-view"
@@ -19,7 +19,7 @@
     "find-versions": "^2.0.0",
     "ink": "^0.5.0",
     "ink-spinner": "git://github.com/jdeniau/ink-spinner.git#jd-fix-ink05-build",
-    "ink-tab": "^1.2.1",
+    "ink-tab": "^1.2.2",
     "jest": "^20.0.4",
     "lint-staged": "^7.1.0",
     "marked": "^0.3.19",
