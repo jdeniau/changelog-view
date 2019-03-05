@@ -1,4 +1,5 @@
-import { h, render, Component, Fragment } from 'ink';
+import React, { Component, Fragment } from 'react';
+import { render } from 'ink';
 import { Tabs, Tab } from 'ink-tab';
 import Spinner from 'ink-spinner';
 import marked from 'marked';

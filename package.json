@@ -17,9 +17,9 @@
     "babel-polyfill": "^6.26.0",
     "babel-preset-env": "^1.7.0",
     "find-versions": "^2.0.0",
-    "ink": "^0.5.0",
-    "ink-spinner": "git://github.com/jdeniau/ink-spinner.git#jd-fix-ink05-build",
-    "ink-tab": "^1.2.2",
+    "ink": "^2.0.3",
+    "ink-spinner": "^3.0.0",
+    "ink-tab": "^2.0.1",
     "jest": "^20.0.4",
     "lint-staged": "^7.1.0",
     "marked": "^0.3.19",
@@ -38,7 +38,8 @@
   },
   "scripts": {
     "test": "jest",
-    "build": "rollup -c && chmod a+x bin/changelog-view && (git commit -m 'build binary' bin/changelog-view || true)",
+    "build":
+      "rollup -c && chmod a+x bin/changelog-view && (git commit -m 'build binary' bin/changelog-view || true)",
     "prepublishOnly": "npm run build",
     "precommit": "lint-staged"
   },
@@ -49,9 +50,6 @@
     }
   },
   "lint-staged": {
-    "*.{js,jsx,json}": [
-      "prettier --write",
-      "git add"
-    ]
+    "*.{js,jsx,json}": ["prettier --write", "git add"]
   }
 }
