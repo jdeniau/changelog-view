@@ -1,5 +1,4 @@
 // #!/usr/bin/env node
-import 'babel-polyfill';
 import minimist from 'minimist';
 import logger from './logger';
 import changelogViewPackage from '../package.json';

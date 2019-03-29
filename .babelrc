@@ -1,25 +1,12 @@
 {
   "presets": [
+    "@babel/preset-react",
     [
-      "env",
+      "@babel/preset-env",
       {
-        "targets": {
-          "node": "current"
-        }
-      }
-    ]
-  ],
-  "plugins": [
-    [
-      "babel-plugin-transform-builtin-extend",
-      {
-        globals: ["Error", "Array"]
-      }
-    ],
-    [
-      "transform-react-jsx",
-      {
-        "pragma": "h"
+        "targets": "node >= 8",
+        "useBuiltIns": "usage",
+        "corejs": 3
       }
     ]
   ]
