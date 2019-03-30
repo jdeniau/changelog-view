@@ -15,7 +15,11 @@ const TEST_PROCESSES = [
     fileName: 'HISTORY.md',
   },
   {
-    type: 'github-releases',
+    type: 'github-file',
+    fileName: 'ChangeLog.md',
+  },
+  {
+    type: 'github-releases', // github releases "need" to be after all github files because there are always releases but sometimes they do only contains tags and thus are useless
   },
 ];
 
@@ -45,6 +49,9 @@ export async function getPackageData(packageName, gtThanVersion = null) {
     try {
       switch (fileToTest.type) {
         case 'github-file':
+          // A possible solution to avoid calling N different urls is to call the "content" api endpoint from github
+          // https://developer.github.com/v3/repos/contents/
+          // Example: https://api.github.com/repos/sebastianbergmann/diff/contents/
           const url = `https://raw.githubusercontent.com/${packageName}/master/${
             fileToTest.fileName
           }`;
