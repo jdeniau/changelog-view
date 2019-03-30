@@ -38,7 +38,8 @@
   },
   "scripts": {
     "test": "jest",
-    "build": "webpack --config webpack.config.js && chmod a+x bin/changelog-view && (git commit -m 'build binary' bin/changelog-view || true)",
+    "build":
+      "webpack --config webpack.config.js && (git commit -m 'build binary' bin/bin.js || true)",
     "prepublishOnly": "npm run build",
     "precommit": "lint-staged"
   },
@@ -49,9 +50,6 @@
     }
   },
   "lint-staged": {
-    "*.{js,jsx,json}": [
-      "prettier --write",
-      "git add"
-    ]
+    "*.{js,jsx,json}": ["prettier --write", "git add"]
   }
 }
