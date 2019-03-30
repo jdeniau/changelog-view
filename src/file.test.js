@@ -8,6 +8,9 @@ function mockAllCalls(packageName) {
   nock('https://raw.githubusercontent.com')
     .get(`/${packageName}/master/HISTORY.md`)
     .reply(404, 'file not found');
+  nock('https://raw.githubusercontent.com')
+    .get(`/${packageName}/master/ChangeLog.md`)
+    .reply(404, 'file not found');
   nock('https://api.github.com')
     .get(`/repos/${packageName}/releases`)
     .reply(404, 'file not found');
