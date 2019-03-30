@@ -2,8 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import process from 'process';
 
-// const GITHUB_REPO_REGEX = /(?:github(?:.com)?)?[\/:](.*\/[^.]*)/;
-const GITHUB_REPO_REGEX = /([^\/:]+\/[^.\/:]+)(?:\.git)?$/;
+const GITHUB_REPO_REGEX = /([^\/:]+\/[^\/:]+)$/;
 
 export default function getPackageInfo(packageString) {
   return (
@@ -14,7 +13,8 @@ export default function getPackageInfo(packageString) {
 }
 
 function getRepoNameFromUrl(url) {
-  const repo = url.match(GITHUB_REPO_REGEX);
+  const urlWithoutGitEnd = url.replace(/\.git$/, ''); // this could possibly be in an optional negative lookahead in the regexp or something like that but I did not understand regexp THAT well ;)
+  const repo = urlWithoutGitEnd.match(GITHUB_REPO_REGEX);
 
   return repo && repo[1];
 }

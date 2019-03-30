@@ -35,6 +35,14 @@ describe('package info', () => {
       repository: 'veryshortrepo/foo',
     };
 
+    const urijsRepoPackageFile = {
+      version: '1.19.0',
+      repository: {
+        type: 'git',
+        url: 'https://github.com/medialize/URI.js.git',
+      },
+    };
+
     const fullrepoPath = path.join(
       process.cwd(),
       'node_modules/fullrepo/package.json'
@@ -53,11 +61,17 @@ describe('package info', () => {
       'node_modules/veryshortrepo/package.json'
     );
 
+    const urijsRepoPath = path.join(
+      process.cwd(),
+      'node_modules/urijs/package.json'
+    );
+
     fs.__setMockFiles({
       [fullrepoPath]: JSON.stringify(fullRepoPackageFile),
       [stringrepoPath]: JSON.stringify(stringRepoPackageFile),
       [shortrepoPath]: JSON.stringify(shortRepoPackageFile),
       [veryShortRepoPath]: JSON.stringify(veryShortRepoPackageFile),
+      [urijsRepoPath]: JSON.stringify(urijsRepoPackageFile),
     });
 
     // string repository info
@@ -85,6 +99,11 @@ describe('package info', () => {
     expect(getPackageInfo('veryshortrepo')).toEqual({
       packageName: 'veryshortrepo/foo',
       version: '2.1.0',
+    });
+
+    expect(getPackageInfo('urijs')).toEqual({
+      packageName: 'medialize/URI.js',
+      version: '1.19.0',
     });
   });
 
