@@ -1,4 +1,3 @@
-// #!/usr/bin/env node
 import minimist from 'minimist';
 import logger from './logger';
 import changelogViewPackage from '../package.json';

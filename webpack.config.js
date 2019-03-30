@@ -6,7 +6,7 @@ module.exports = {
   entry: './src/bin.js',
   output: {
     path: path.resolve(__dirname, 'bin'),
-    filename: 'changelog-view',
+    filename: 'bin.js',
   },
   module: {
     rules: [
