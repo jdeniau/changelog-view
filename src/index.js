@@ -1,5 +1,5 @@
-import React, { Component, Fragment } from 'react';
-import { render } from 'ink';
+import React, { Component, Fragment, useState } from 'react';
+import { render, Box, Color, StdoutContext, Text } from 'ink';
 import { Tabs, Tab } from 'ink-tab';
 import Spinner from 'ink-spinner';
 import marked from 'marked';
@@ -8,8 +8,8 @@ import { getVersionListForPackage } from './file';
 import getPackageInfo from './packageInfo';
 import logger from './logger';
 
-function terminalMarked(content) {
-  return marked(content, {
+function Markdown({ children }) {
+  return marked(children, {
     renderer: new TerminalRenderer(),
   });
 }
@@ -20,9 +20,7 @@ function changelogView(packageString) {
   if (!packageInfo) {
     return new Promise((resolve, reject) => {
       reject({
-        message: terminalMarked(
-          ` > *package "${packageString}" version is not well formatted*`
-        ),
+        message: `*package "${packageString}" version is not well formatted*`,
         type: 'error',
       });
     });
@@ -32,24 +30,23 @@ function changelogView(packageString) {
 
   return getVersionListForPackage(packageName, version)
     .then(versionList => {
-      let message = terminalMarked(
-        `# CHANGELOG for "${packageName}" (current version: \`${version}\`)`
-      );
-
-      if (versionList.length > 0) {
-        versionList.forEach(c => {
-          message = message + terminalMarked(c.content);
-        });
+      if (versionList.length === 0) {
+        return {
+          versionList,
+          message: `*No changes found for "${packageName}"*`,
+          type: 'success',
+          packageName,
+          currentVersion: version,
+        };
       } else {
-        message =
-          message +
-          terminalMarked(` > *No changes found for "${packageName}"*`);
+        return {
+          versionList,
+          message: null,
+          type: 'success',
+          packageName,
+          currentVersion: version,
+        };
       }
-
-      return {
-        message,
-        type: 'success',
-      };
     })
     .catch(error => {
       const message = `${
@@ -57,6 +54,7 @@ function changelogView(packageString) {
       }\nTested files: ${error.testedProcess.map(
         f => `\n  * [${f.type}] ${f.fileName}`
       )}`;
+
       return {
         type: 'error',
         message,
@@ -87,6 +85,65 @@ function cachedChangelogView(packageString) {
       }
     }
   });
+}
+
+function ChangelogViewResult({ result }) {
+  const [currentChangelog, setCurrentChangelog] = useState(
+    result.versionList && result.versionList[0]
+      ? result.versionList[0].content
+      : result.message
+  );
+
+  const { versionList, message } = result;
+
+  if (!versionList) {
+    return (
+      <Box textWrap="wrap">
+        <Markdown>{message}</Markdown>
+      </Box>
+    );
+  }
+
+  const items = versionList.map(version => ({
+    label: version.version,
+    value: version.version,
+  }));
+
+  const innerOnSelectVersion = name => {
+    const selectedVersion = result.versionList.find(v => v.version === name);
+
+    if (selectedVersion) {
+      setCurrentChangelog(selectedVersion.content);
+    }
+  };
+
+  return (
+    <Box>
+      <Box paddingRight={3}>
+        <Tabs flexDirection="column" onChange={innerOnSelectVersion}>
+          {versionList.map(({ version }) => (
+            <Tab key={version} name={version}>
+              {version}
+            </Tab>
+          ))}
+        </Tabs>
+      </Box>
+
+      <Box textWrap="wrap">
+        <Markdown>{currentChangelog}</Markdown>
+      </Box>
+    </Box>
+  );
+}
+
+function FullWidthSeparator() {
+  return (
+    <StdoutContext.Consumer>
+      {({ stdout }) => (
+        <Box>{new Array(stdout.columns).fill('─').join('')}</Box>
+      )}
+    </StdoutContext.Consumer>
+  );
 }
 
 class PackageListChangelog extends Component {
@@ -123,25 +180,43 @@ class PackageListChangelog extends Component {
 
   render() {
     const { packageStringList } = this.props;
+    const { changelogViewResult } = this.state;
 
     return (
-      <div>
-        <div>
-          {this.state.changelogViewResult ? (
-            <Fragment>{this.state.changelogViewResult.message}</Fragment>
-          ) : (
-            <Fragment>
-              <Spinner orange /> Loading
-            </Fragment>
-          )}
-        </div>
+      <Fragment>
+        {changelogViewResult && (
+          <Fragment>
+            <FullWidthSeparator />
+            <Box marginTop={0}>
+              CHANGELOG for "{changelogViewResult.packageName}" (current
+              version: `{changelogViewResult.currentVersion}`)
+            </Box>
+
+            <FullWidthSeparator />
+
+            <Box>
+              <ChangelogViewResult result={changelogViewResult} />
+            </Box>
+          </Fragment>
+        )}
+
+        {!changelogViewResult && (
+          <Box>
+            <Spinner orange /> Loading
+          </Box>
+        )}
+
+        <FullWidthSeparator />
 
         <Tabs onChange={this.handleTabChange}>
           {packageStringList.map(packageString => (
-            <Tab name={packageString}>{packageString}</Tab>
+            <Tab key={packageString} name={packageString}>
+              {packageString}
+            </Tab>
           ))}
         </Tabs>
-      </div>
+        <FullWidthSeparator />
+      </Fragment>
     );
   }
 }

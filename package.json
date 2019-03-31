@@ -19,7 +19,7 @@
     "babel-polyfill": "^6.26.0",
     "core-js": "^3.0.0",
     "find-versions": "^2.0.0",
-    "ink": "^2.0.3",
+    "ink": "^2.1.0",
     "ink-spinner": "^3.0.0",
     "ink-tab": "^2.0.1",
     "jest": "^24.5.0",
