@@ -3265,10 +3265,10 @@ ink-spinner@^3.0.0:
     cli-spinners "^1.0.0"
     prop-types "^15.5.10"
 
-ink-tab@^2.0.1:
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/ink-tab/-/ink-tab-2.0.1.tgz#5f0341fbb40b7391fae28953ee24334d742d681b"
-  integrity sha512-2qHNCtuf+frv0bO03WDlQ3K4uXHtBa+TMzZpTadKwSLLqYs0Tf5nhSitr0/5S6ja0zwyXdoVk3sT274RYIBQuA==
+ink-tab@^2.1.1:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/ink-tab/-/ink-tab-2.1.1.tgz#d77769f850cf0138eddb7ebe85959a151454ad2f"
+  integrity sha512-92x+Si8bxZ9r0SAj5wZOxcWNFt/3UQblKurdCT8EWI+QPJYqAPcYkmAx6mHUuX+xBYWDyFoJ7I92vcv3ThAZpQ==
   dependencies:
     prop-types "^15.7.2"
 

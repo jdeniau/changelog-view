@@ -33,10 +33,24 @@ function ChangelogViewResult({ result }) {
     }
   };
 
+  // use largest version string length for separator width
+  const width = versionList.reduce(
+    (acc, curr) => Math.max(acc, curr.version.length),
+    0
+  );
+
   return (
     <Box>
       <Box paddingRight={3}>
-        <Tabs flexDirection="column" onChange={innerOnSelectVersion}>
+        <Tabs
+          flexDirection="column"
+          width={width + 4}
+          onChange={innerOnSelectVersion}
+          keyMap={{
+            useTab: false,
+            useNumbers: false,
+          }}
+        >
           {versionList.map(({ version }) => (
             <Tab key={version} name={version}>
               {version}
