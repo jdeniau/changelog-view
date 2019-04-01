@@ -41,7 +41,7 @@ function ChangelogViewResult({ result }) {
 
   return (
     <Box>
-      <Box paddingRight={3}>
+      <Box width={width + 7} marginRight={5}>
         <Tabs
           flexDirection="column"
           width={width + 4}
