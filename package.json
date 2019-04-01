@@ -35,12 +35,14 @@
     "lint-staged": "^7.1.0",
     "nock": "^9.2.6",
     "prettier": "^1.16.4",
+    "svg-term-cli": "^2.1.1",
     "webpack": "^4.29.6",
     "webpack-cli": "^3.3.0"
   },
   "scripts": {
     "test": "jest",
     "build": "webpack --config webpack.config.js && (git commit -m 'build binary' bin/bin.js || true)",
+    "demo": "clear && babel-node ./src/bin.js sebastianbergmann/diff@3.0.0  jdeniau/ink-tab@1.0.0",
     "prepublishOnly": "npm run build",
     "precommit": "lint-staged"
   },
