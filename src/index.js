@@ -1,7 +1,7 @@
 import React from 'react';
 import { render } from 'ink';
-import PackageListChangelog from './component/PackageListChangelog';
+import App from './App';
 
 export default function packageListChangeLog(packageStringList) {
-  render(<PackageListChangelog packageStringList={packageStringList} />);
+  render(<App packageStringList={packageStringList} />);
 }
