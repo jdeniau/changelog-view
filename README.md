@@ -1,7 +1,7 @@
 Changelog view [![Build Status](https://travis-ci.org/jdeniau/changelog-view.svg?branch=master)](https://travis-ci.org/jdeniau/changelog-view)
 ===================
 
-Tool view changelog in console. 
+Display dependencies changelog directly in your terminal. 
 
 It list only the changes between the specified version and the latest version.
 You can see it as a `git diff` between version for changelogs.
